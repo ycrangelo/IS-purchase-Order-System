@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Example</title>
+
+    <!-- Add Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Add Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Optionally add a custom style -->
+    <style>
+        body {
+            margin: 30px;
+        }
+        .container {
+            max-width: 500px;
+        }
+        .card {
+            padding: 20px;
+        }
+
+        /* Ensure the input group is relative for positioning the icon */
+        .form-group {
+            position: relative;
+        }
+
+        /* Position the icon inside the input */
+        .form-control {
+            padding-left: 35px; /* Space for the icon */
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%); /* Vertically center the icon */
+            pointer-events: none; /* Disable clicking on the icon */
+            color: #6c757d; /* Set icon color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <img src="{{ url_for('static', filename='img/texwipe.png') }}" width="100%">
+            </div>
+            <div class="card-body">
+                {% if error %}
+                    <p style="color:red;" class="text-center">{{ error }}</p>
+                {% endif %}
+
+                <!-- Form -->
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <!-- Input with an icon inside -->
+                        <i class="bi bi-envelope-fill"></i> <!-- Icon -->
+                        <input type="text" id="name" name="name" placeholder="Username" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="bi bi-lock-fill"></i>
+                        <input type="password" id="password" name="password" placeholder="Password" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js (optional for Bootstrap components) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
