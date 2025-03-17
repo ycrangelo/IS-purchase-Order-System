@@ -42,35 +42,30 @@
     </div>
 </div>
 
-<table class="table mt-3">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
+{% if logs %}
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log[1] }}</td>  <!-- Username -->
+                            <td>{{ log[2] }}</td>  <!-- Action (did) -->
+                            <td>{{ log[3] }}</td>  <!-- Date (YYYY-MM-DD) -->
+                            <td>{{ log[4] }}</td>  <!-- Time (12-hour format with AM/PM) -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No logs found.</p>
+        {% endif %}
 </div>
 
 {% endblock %}

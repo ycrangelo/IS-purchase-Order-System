@@ -103,8 +103,26 @@ def inventory():
         my_cursor.execute("INSERT INTO inventory (code_id, desription,location,quantity) VALUES (%s, %s, %s, %s)", (code_id, description,location,quantity))
         my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], "Added in Inventory with code ID: "+code_id+", Description: "+description))
         mydb.commit()
-        
+    if request.method =='GET':
+        my_cursor.execute("SELECT * FROM inventory ORDER BY created_at DESC")
+        logs = my_cursor.fetchall()  # Fetch all rows
 
+        # Format the date and time for each log entry
+        formatted_logs = []
+        for log in logs:
+            # Assuming log[3] is the datetime field (created_at)
+            log_date = log[3].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
+            log_time = log[3].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
+            
+            formatted_logs.append((log[0], log[1], log[2], log[3],log[4],log_date, log_time))
+
+        # Close cursor and database connection
+        my_cursor.close()
+        mydb.close()
+
+        # Pass the formatted logs to the template
+        return render_template('inventory.html', logs=formatted_logs, show_sidebar=True)
+        
     return render_template('inventory.html', show_sidebar=True)
 # Logout route
 @app.route('/logout')
