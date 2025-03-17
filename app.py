@@ -38,7 +38,7 @@ def login():
         print("inside validation, World!")
         session['username'] = username  # Set session only if user is valid
         session['password'] = password
-        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (username, "log in"))
+        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], "log in"))
         mydb.commit()
         return redirect(url_for('auditlogs'))  # Redirect to the audit logs page after successful login
     else:
@@ -55,7 +55,7 @@ def auditlogs():
     # Check if 'username' exists in the session
     if 'username' not in session or session['username'] == '':
         # If not logged in, redirect to the login page
-        return render_template('login.html')
+        return redirect(url_for('home'))
 
     # Connect to the database
     mydb = get_db_connection()
@@ -82,9 +82,37 @@ def auditlogs():
     return render_template('auditlogs.html', logs=formatted_logs, show_sidebar=True)
 
 # Inventory route
-@app.route('/inventory')
+@app.route('/inventory', methods=['GET', 'POST'])
 def inventory():
+     # Connect to the database
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+    
+    # Check if 'username' exists in the session
+    if 'username' not in session or session['username'] == '':
+        # If not logged in, redirect to the login page
+        return redirect(url_for('home'))
+    
+    # Handle POST request (form submission)
+    if request.method == 'POST':
+        # Process form data
+        code_id = request.form.get('codeId')
+        description = request.form.get('description')
+        location = request.form.get('location')
+        quantity = request.form.get('quantity')
+        my_cursor.execute("INSERT INTO inventory (code_id, desription,location,quantity) VALUES (%s, %s, %s, %s)", (code_id, description,location,quantity))
+        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], "Added in Inventory with code ID: "+code_id+", Description: "+description))
+        mydb.commit()
+        
+
     return render_template('inventory.html', show_sidebar=True)
+# Logout route
+@app.route('/logout')
+def logout():
+    # Clear the session
+    session.pop('username', None)
+    session.pop('password', None)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
