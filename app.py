@@ -88,6 +88,26 @@ def auditlogs():
     # Pass the formatted logs to the template
     return render_template('auditlogs.html', logs=formatted_logs, show_sidebar=True)
 
+
+@app.route('/inventory/create', methods=['GET', 'POST'])
+def inventoryCreate():
+    # Connect to the database
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+        # Process form data
+    data = request.get_json()
+        
+    codeId = data.get('codeId')
+    description = data.get('description')
+    location = data.get('location')
+    quantity = data.get('quantity')
+    price = data.get('price')
+    my_cursor.execute("INSERT INTO inventory (code_id, desription, location, quantity,price) VALUES (%s, %s, %s, %s,%s)", 
+                          (codeId, description, location, quantity,price))
+    my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                          (session['username'], f"Added in Inventory with code ID: {codeId}, Description: {description}"))
+    mydb.commit()
+    return jsonify({"message": "Account Type created successfully!"}), 200
 # Inventory route
 @app.route('/inventory', methods=['GET', 'POST'])
 def inventory():
@@ -103,15 +123,19 @@ def inventory():
     # Handle POST request (form submission)
     if request.method == 'POST':
         # Process form data
-        code_id = request.form.get('codeId')
-        description = request.form.get('description')
-        location = request.form.get('location')
-        quantity = request.form.get('quantity')
-        my_cursor.execute("INSERT INTO inventory (code_id, desription, location, quantity) VALUES (%s, %s, %s, %s)", 
-                          (code_id, description, location, quantity))
+        data = request.get_json()
+        
+        codeId = data.get('codeId')
+        description = data.get('description')
+        location = data.get('location')
+        quantity = data.get('quantity')
+        price = data.get('price')
+        my_cursor.execute("INSERT INTO inventory (code_id, description, location, quantity,price) VALUES (%s, %s, %s, %s,%s)", 
+                          (codeId, description, location, quantity,price))
         my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                          (session['username'], f"Added in Inventory with code ID: {code_id}, Description: {description}"))
+                          (session['username'], f"Added in Inventory with code ID: {codeId}, Description: {description}"))
         mydb.commit()
+        return jsonify({"message": "Account Type created successfully!"}), 200
     
     # Fetch inventory data for both GET and POST requests
     my_cursor.execute("SELECT * FROM inventory ORDER BY created_at DESC")
@@ -132,6 +156,7 @@ def inventory():
 
     # Pass the formatted logs to the template
     return render_template('inventory.html', logs=formatted_logs, show_sidebar=True)
+
 # Logout route
 @app.route('/logout')
 def logout():
