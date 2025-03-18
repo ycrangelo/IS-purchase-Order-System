@@ -46,27 +46,91 @@
     </div>
 </div>
 
+
+<!-- Modal edit -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="modalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEdit">Create Inventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="error-message" style="display: none">
+                    Please fill up correctly. make sure the Price and Quantity are numbers.
+                  </h5>
+                    <div class="input-group mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">Code ID</span>
+                            <input type="text" id="codeId" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">Description</span>
+                        <input type="text" id="description" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">location</span>
+                        <input type="text" id="location" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">Price</span>
+                        <input type="text" id="price" name="price" class="form-control" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">Quantity</span>
+                        <input type="text" id="quantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                    <div class="d-flex justify-content-end w-100">
+                        <button type="button" class="btn btn-success" id="saveInventory">Save</button>
+                    </div>
+            </div>                    
+        </div>
+    </div>
+</div>
+
 {% if logs %}
             <table class="table mt-3">
                 <thead>
                     <tr>
-                        <th>Code ID</th>
-                        <th>Added by</th>
+                        <th></th>
                         <th>Description</th>
                         <th>Location</th>
                         <th>Quantity</th>
-                        <th>Date Created</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for log in logs %}
                         <tr>
-                            <td>{{ log[1] }}</td> 
-                            <td>{{ log[7] }}</td>
+                            <td>
+                                <div>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit"  id="edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="deactivation">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
                             <td>{{ log[2] }}</td>
                             <td>{{ log[3] }}</td> 
-                            <td>{{ log[4] }}</td>  
-                            <td>{{ log[5] }}</td>  
+                            <td class="d-flex">
+                                {% if log[4]|int < 20 %}
+                                    <p style="color: red;"><p style="font-weight: 600; color: red;">Low Quantity : </p> {{ log[4] }}</p>
+                                {% else %}
+                                    <p style="color: green;">{{ log[4] }}</p>
+                                {% endif %}
+                            </td>                           
+                            <td>{{ log[7] }}</td>  
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -81,21 +145,27 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Bootstrap JS and dependencies -->
+ <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS (including Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+    
     $(document).on("click", "#saveInventory", function (event) {
       var codeId = $.trim($("#codeId").val()); // No need for encodeURI unless you're sending data to a server
       var description = $.trim($("#description").val()); // No need for encodeURI unless you're sending data to a server
-      var location = $.trim($("#location").val());
+      var locationn = $.trim($("#location").val());
       var price = $.trim($("#price").val());
       var quantity = $.trim($("#quantity").val());
     //    var accountTypeButton = $.trim($("#accountTypeButton").text());
        console.log("codeId:", codeId);
        console.log("description:", description);
-       console.log("location:", location);
+       console.log("location:", locationn);
        console.log("price:", price);
        console.log("quantity:", quantity);
        
@@ -109,7 +179,7 @@
         isOk++;
         console.log(isOk);
       }
-      if (location == "") {
+      if (locationn == "") {
         isOk++;
         console.log(isOk);
       }
@@ -148,15 +218,16 @@
            data: JSON.stringify({  
                codeId: codeId, 
                description: description,
-               location: location,
+               location: locationn,
                price: price,
                quantity:quantity
 
            }),
            success: function (response) {
-            //    setTimeout(function () {
-            //    location.reload();
-            //  }, 500);
+            setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
              console.log(response);
            },
            error: function (error) {

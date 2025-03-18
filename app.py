@@ -121,21 +121,6 @@ def inventory():
         return redirect(url_for('home'))
     
     # Handle POST request (form submission)
-    if request.method == 'POST':
-        # Process form data
-        data = request.get_json()
-        
-        codeId = data.get('codeId')
-        description = data.get('description')
-        location = data.get('location')
-        quantity = data.get('quantity')
-        price = data.get('price')
-        my_cursor.execute("INSERT INTO inventory (code_id, description, location, quantity,price) VALUES (%s, %s, %s, %s,%s)", 
-                          (codeId, description, location, quantity,price))
-        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                          (session['username'], f"Added in Inventory with code ID: {codeId}, Description: {description}"))
-        mydb.commit()
-        return jsonify({"message": "Account Type created successfully!"}), 200
     
     # Fetch inventory data for both GET and POST requests
     my_cursor.execute("SELECT * FROM inventory ORDER BY created_at DESC")
@@ -148,7 +133,7 @@ def inventory():
         log_date = log[5].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
         log_time = log[5].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
         
-        formatted_logs.append((log[0], log[1], log[2], log[3], log[4], log_date, log_time,session['username']))
+        formatted_logs.append((log[0], log[1], log[2], log[3],log[4], log_date, log_time,log[6]))
 
     # Close cursor and database connection
     my_cursor.close()
