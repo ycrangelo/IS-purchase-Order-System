@@ -109,31 +109,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for log in logs %}
-                        <tr>
-                            <td>
-                                <div>
-                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit"  id="edit">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-danger" id="deactivation">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </button>
-                                </div>
-                            </td>
-                            <td>{{ log[2] }}</td>
-                            <td>{{ log[3] }}</td> 
-                            <td class="d-flex">
-                                {% if log[4]|int < 20 %}
-                                    <p style="color: red;"><p style="font-weight: 600; color: red;">Low Quantity : </p> {{ log[4] }}</p>
-                                {% else %}
-                                    <p style="color: green;">{{ log[4] }}</p>
-                                {% endif %}
-                            </td>                           
-                            <td>{{ log[7] }}</td>  
-                        </tr>
-                    {% endfor %}
-                </tbody>
+    {% for log in logs %}
+        <tr data-id="{{ log[0] }}">
+            <td>
+                <div>
+                    <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#modalEdit">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger" id="deactivation">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
+            </td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td> 
+            <td class="d-flex">
+                {% if log[4]|int < 20 %}
+                    <p style="color: red;"><p style="font-weight: 600; color: red;">Low Quantity : </p> {{ log[4] }}</p>
+                {% else %}
+                    <p style="color: green;">{{ log[4] }}</p>
+                {% endif %}
+            </td>                           
+            <td>{{ log[7] }}</td>  
+        </tr>
+    {% endfor %}
+</tbody>
             </table>
         {% else %}
             <p>No logs found.</p>
