@@ -102,7 +102,7 @@ content %}
           >
             Account type
           </button>
-          <ul class="dropdown-menu" aria-labelledby="accountTypeButton">
+          <ul class="dropdown-menu" aria-labelledby="accountTypeButton" style="max-height: 200px; overflow-y: auto;">
             {% for log in formatted_account_type %}
             <li>
               <a
@@ -122,6 +122,7 @@ content %}
             {% endfor %}
           </ul>
         </div>
+        
         <div class="input-group mb-3 mt-3">
           <input
             type="text"
