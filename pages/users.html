@@ -195,13 +195,13 @@ content %}
   </div>
   <div class="container">
     {% if logs %}
-        <table class="table">
+        <table class="table mt-3">
             <thead>
                 <tr>
                     <th>Username</th>
-                    <th>Action</th>
-                    <th>Date</th>
-                    <th>Time</th>
+                    <th>Fullname</th>
+                    <th>Status</th>
+                    <th>Account type</th>
                 </tr>
             </thead>
             <tbody>
@@ -260,11 +260,11 @@ content %}
     var password = $.trim($("#password").val());
     var Username = $.trim($("#username").val());
     var accountTypeButton = $.trim($("#accountTypeButton").text());
-    console.log("Status:", status);
-    console.log("Account Type:", accountTypeButton);
-    console.log("Username:", Username);
-    console.log("password:", password);
-    console.log("fullname:", fullname);
+    // console.log("Status:", status);
+    // console.log("Account Type:", accountTypeButton);
+    // console.log("Username:", Username);
+    // console.log("password:", password);
+    // console.log("fullname:", fullname);
 
     var isOk = 0;
     if (accountTypeButton == "Account type") {
