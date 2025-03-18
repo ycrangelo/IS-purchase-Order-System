@@ -42,7 +42,7 @@ def login():
 
     if user:  # If user is found
         print("inside validation, World!")
-        session['username'] = username  # Set session only if user is valid
+        session['username'] = user[3]  # Set session only if user is valid
         session['password'] = password
         my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], "log in"))
         mydb.commit()
@@ -123,7 +123,7 @@ def inventory():
         log_date = log[5].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
         log_time = log[5].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
         
-        formatted_logs.append((log[0], log[1], log[2], log[3], log[4], log_date, log_time))
+        formatted_logs.append((log[0], log[1], log[2], log[3], log[4], log_date, log_time,session['username']))
 
     # Close cursor and database connection
     my_cursor.close()
@@ -138,6 +138,15 @@ def logout():
     session.pop('username', None)
     session.pop('password', None)
     return redirect(url_for('home'))
+
+@app.route('/users')
+def users():
+   return render_template('users.html', show_sidebar=True)
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
