@@ -107,7 +107,7 @@ def inventoryCreate():
     my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
                           (session['username'], f"Added in Inventory with code ID: {codeId}, Description: {description}"))
     mydb.commit()
-    return jsonify({"message": "Account Type created successfully!"}), 200
+    return jsonify({"message": "inventory created successfully!"}), 200
 # Inventory route
 @app.route('/inventory', methods=['GET', 'POST'])
 def inventory():
