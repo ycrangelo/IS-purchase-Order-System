@@ -1,73 +1,328 @@
-{% extends "base.html" %}
-
-{% block title %}Inventory{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Inventory{% endblock %} {% block
+content %}
 <div class="d-flex flex-row justify-content-between">
-    <h1>Inventory</h1>
-   <!-- Button to trigger modal -->
-<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Create
-</button>
+  <h1>Users</h1>
+  <!-- Button to trigger modal -->
+  <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#exampleModal"
+  >
+    Create Account Type
+  </button>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Create Inventory</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/inventory" method="POST">
-                    <div class="input-group mb-3">
-                        <input type="text" id="codeId" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="description" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="location" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="quantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                    <div class="d-flex justify-content-end w-100">
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </div>
-                </form>
-            </div>                    
+<!-- Modal account type -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Account Type</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="accountType"
+            name="accountType"
+            class="form-control"
+            placeholder="Account Type"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
         </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="status"
+            name="status"
+            class="form-control"
+            placeholder="Status"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveAccountType">
+            Save
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
-{% if logs %}
-            <table class="table table-bordered mt-3">
-                <thead>
+<!-- Modal user -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="createUser"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Account</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h3 id="error-message" style="display: none">
+          Please fill up correctly
+        </h3>
+        <div class="dropdown">
+          <!-- Button to trigger dropdown -->
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            data-bs-container="#createUser"
+            id="accountTypeButton"
+          >
+            Account type
+            <!-- Default text -->
+          </button>
+          <!-- Dropdown menu -->
+          <ul class="dropdown-menu">
+            {% for log in logs %}
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                onclick="updateButtonText('{{ log[1] }}')"
+                >{{ log[1] }}</a
+              >
+            </li>
+            {% else %}
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                onclick="updateButtonText('No account types found')"
+                >No account types found</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="input-group mb-3 mt-3">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="Username"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Password"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="fullname"
+            name="fullname"
+            class="form-control"
+            placeholder="Fullname"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="status1"
+            name="status1"
+            class="form-control"
+            placeholder="Status"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveAccount">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5">
+  <div class="d-flex justify-content-end w-100">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#createUser"
+    >
+      Create Account
+    </button>
+  </div>
+  <div class="container">
+    {% if logs %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
                     <tr>
-                        <th>Code ID</th>
-                        <th>Description</th>
-                        <th>Location</th>
-                        <th>Quantity</th>
-                        <th>Date Created</th>
+                        <td>{{ log[1] }}</td>  <!-- Username -->
+                        <td>{{ log[2] }}</td>  <!-- Action (did) -->
+                        <td>{{ log[3] }}</td>  <!-- Date (YYYY-MM-DD) -->
+                        <td>{{ log[4] }}</td>  <!-- Time (12-hour format with AM/PM) -->
                     </tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                        <tr>
-                            <td>{{ log[1] }}</td> 
-                            <td>{{ log[2] }}</td>
-                            <td>{{ log[3] }}</td> 
-                            <td>{{ log[4] }}</td>  
-                            <td>{{ log[5] }}</td>  
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No logs found.</p>
-        {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No logs found.</p>
+    {% endif %}
+</div>
 </div>
 
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- JavaScript to update button text -->
+<script>
+  function updateButtonText(selectedText) {
+    // Update the button text with the selected item
+    document.getElementById("accountTypeButton").innerText = selectedText;
+  }
+</script>
+<script type="text/javascript">
+  $(document).on("click", "#saveAccountType", function (event) {
+    var status = $.trim($("#status").val()); // No need for encodeURI unless you're sending data to a server
+    var accountType = $.trim($("#accountType").val()); // No need for encodeURI unless you're sending data to a server
+    console.log("Status:", status);
+    console.log("Account Type:", accountType);
+
+    $.ajax({
+      url: "{{url_for('createAccountType')}}",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ status: status, accountType: accountType }),
+      success: function (response) {
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+
+  $(document).on("click", "#saveAccount", function (event) {
+    var status = $.trim($("#status1").val()); // No need for encodeURI unless you're sending data to a server
+    var fullname = $.trim($("#fullname").val()); // No need for encodeURI unless you're sending data to a server
+    var password = $.trim($("#password").val());
+    var Username = $.trim($("#username").val());
+    var accountTypeButton = $.trim($("#accountTypeButton").text());
+    console.log("Status:", status);
+    console.log("Account Type:", accountTypeButton);
+    console.log("Username:", Username);
+    console.log("password:", password);
+    console.log("fullname:", fullname);
+
+    var isOk = 0;
+    if (accountTypeButton == "Account type") {
+      isOk = 1;
+      console.log(isOk);
+    }
+    if (Username == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (status == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (fullname == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (password == "") {
+      isOk++;
+      console.log(isOk);
+    }
+
+    if (isOk > 0) {
+      $("#error-message").css({
+        display: "block", // Show the element
+        color: "red", // Change the text color to red
+      });
+      isOk=0;
+      setTimeout(function () {
+        $("#error-message").css({
+          display: "none", // Show the element
+          color: "red", // Change the text color to red
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('createAccount')}}",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ 
+            status: status, 
+            fullname: fullname, 
+            password: password,
+            Username: Username,
+            accountTypeButton: accountTypeButton
+        }),
+        success: function (response) {
+            setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+</script>
 {% endblock %}

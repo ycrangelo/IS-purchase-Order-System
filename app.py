@@ -1,4 +1,5 @@
-from flask import Flask, render_template, session, request, redirect, url_for
+from flask import Flask, render_template, session,request,jsonify, redirect, url_for
+
 import mysql.connector
 
 app = Flask(__name__, template_folder='pages')
@@ -141,12 +142,85 @@ def logout():
 
 @app.route('/users')
 def users():
-   return render_template('users.html', show_sidebar=True)
+    # Check if 'username' exists in the session
+    if 'username' not in session or session['username'] == '':
+        # If not logged in, redirect to the login page
+        return redirect(url_for('home'))
+    
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    # Query the database to get all audit logs
+    my_cursor.execute("SELECT * FROM users ORDER BY created_at DESC")
+    logs = my_cursor.fetchall()  # Fetch all rows
+
+    # Format the date and time for each log entry
+    formatted_logs = []
+    for log in logs:
+
+        formatted_logs.append((log[0], log[1], log[3], log[4], log[5]))
+
+    # Close cursor and database connection
+    my_cursor.close()
+    mydb.close()
+
+    # Pass the formatted logs to the template
+    return render_template('users.html', logs=formatted_logs, show_sidebar=True)
 
 
+@app.route('/users/create/accountType', methods=['GET','POST'])
+def createAccountType():
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+    
+    try:
+        # Get the JSON data from the request body
+        data = request.get_json()
+        
+        status = data.get('status')
+        accountType = data.get('accountType')
+        
+        print(f"Status: {status}, Account Type: {accountType}")
 
+        # Ensure data is not empty before proceeding with the insert
+        if status and accountType:
+            my_cursor.execute("INSERT INTO account_type (account_type, status) VALUES (%s, %s)", (accountType, status))
+            my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], f"Created account type: {accountType} With status: {status} "))
+            mydb.commit()
+            return jsonify({"message": "Account Type created successfully!"}), 200
+        else:
+            return jsonify({"error": "Missing data!"}), 400
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/users/create/account', methods=['GET','POST'])
+def createAccount():
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+    
+    try:
+        # Get the JSON data from the request body
+        data = request.get_json()
+        status = data.get('status')
+        accountType = data.get('accountTypeButton')
+        Username = data.get('Username')
+        password = data.get('password')
+        fullname = data.get('fullname')
+        
+        print(f"Status: {status}, Account Type: {accountType}")
 
-
-
+        # Ensure data is not empty before proceeding with the insert
+        if status and accountType:
+            my_cursor.execute("INSERT INTO users (username, password,fullname,status,account_type) VALUES (%s, %s,%s,%s, %s)", (Username,password, fullname,status,accountType))
+            my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], f"Created account: {Username} With status: {accountType} "))
+            mydb.commit()
+            return jsonify({"message": "Account Type created successfully!"}), 200
+        else:
+            return jsonify({"error": "Missing data!"}), 400
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)
