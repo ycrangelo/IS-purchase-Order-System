@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Flask App{% endblock %}</title>
+    <title>{% block title %}Inventory{% endblock %}</title>
     <!-- Add Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Add Bootstrap Icons -->
@@ -25,6 +25,9 @@
             top: 0;
             left: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .sidebar a {
             color: white;
@@ -47,10 +50,14 @@
     {% if show_sidebar %}
     <div class="sidebar">
        <div>
-        <h3>My App</h3>
         <a href="{{ url_for('auditlogs') }}">Audit Logs</a>
         <a href="{{ url_for('inventory') }}">Inventory</a>
        </div>
+       <form action="/logout">
+        <div class="d-flex justify-content-center border-1 w-100">
+            <button type="submit" class="btn btn-danger w-100">Log out</button>
+        </div>
+       </form>
     </div>
 {% endif %}
 

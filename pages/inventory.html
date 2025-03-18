@@ -46,19 +46,21 @@
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>Action</th>
-                        <th>Date</th>
-                        <th>Time</th>
+                        <th>Code ID</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Quantity</th>
+                        <th>Date Created</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for log in logs %}
                         <tr>
-                            <td>{{ log[1] }}</td>  <!-- Username -->
-                            <td>{{ log[2] }}</td>  <!-- Action (did) -->
-                            <td>{{ log[3] }}</td>  <!-- Date (YYYY-MM-DD) -->
-                            <td>{{ log[4] }}</td>  <!-- Time (12-hour format with AM/PM) -->
+                            <td>{{ log[1] }}</td> 
+                            <td>{{ log[2] }}</td>
+                            <td>{{ log[3] }}</td> 
+                            <td>{{ log[4] }}</td>  
+                            <td>{{ log[5] }}</td>  
                         </tr>
                     {% endfor %}
                 </tbody>
