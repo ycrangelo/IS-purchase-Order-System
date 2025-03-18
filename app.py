@@ -153,19 +153,24 @@ def users():
     # Query the database to get all audit logs
     my_cursor.execute("SELECT * FROM users ORDER BY created_at DESC")
     logs = my_cursor.fetchall()  # Fetch all rows
+    
+    my_cursor.execute("SELECT * FROM account_type ORDER BY created_at DESC")
+    account_type = my_cursor.fetchall()  # Fetch all rows
 
     # Format the date and time for each log entry
     formatted_logs = []
     for log in logs:
-
         formatted_logs.append((log[0], log[1], log[3], log[4], log[5]))
+    formatted_account_type = []
+    for account_types in account_type:
+        formatted_account_type.append((account_types[1]))
 
     # Close cursor and database connection
     my_cursor.close()
     mydb.close()
 
     # Pass the formatted logs to the template
-    return render_template('users.html', logs=formatted_logs, show_sidebar=True)
+    return render_template('users.html', logs=formatted_logs, formatted_account_type=formatted_account_type, show_sidebar=True)
 
 
 @app.route('/users/create/accountType', methods=['GET','POST'])

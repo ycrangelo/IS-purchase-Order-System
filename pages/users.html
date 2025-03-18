@@ -93,28 +93,23 @@ content %}
           Please fill up correctly
         </h3>
         <div class="dropdown">
-          <!-- Button to trigger dropdown -->
           <button
             class="btn btn-secondary dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
-            data-bs-container="#createUser"
             id="accountTypeButton"
           >
             Account type
-            <!-- Default text -->
           </button>
-          <!-- Dropdown menu -->
-          <ul class="dropdown-menu">
-            {% for log in logs %}
+          <ul class="dropdown-menu" aria-labelledby="accountTypeButton">
+            {% for log in formatted_account_type %}
             <li>
               <a
                 class="dropdown-item"
                 href="#"
-                onclick="updateButtonText('{{ log[1] }}')"
-                >{{ log[1] }}</a
-              >
+                onclick="updateButtonText('{{ log }}')"
+              >{{ log }}</a>
             </li>
             {% else %}
             <li>
@@ -122,8 +117,7 @@ content %}
                 class="dropdown-item"
                 href="#"
                 onclick="updateButtonText('No account types found')"
-                >No account types found</a
-              >
+              >No account types found</a>
             </li>
             {% endfor %}
           </ul>
@@ -223,6 +217,13 @@ content %}
 
 <!-- Include jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- JavaScript to update button text -->
 <script>
   function updateButtonText(selectedText) {
