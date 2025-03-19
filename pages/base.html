@@ -50,6 +50,7 @@
     {% if show_sidebar %}
     <div class="sidebar">
        <div>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="{{ url_for('inventory') }}">Inventory</a>
         <a href="{{ url_for('users') }}">Users</a>
         <a href="{{ url_for('auditlogs') }}">Audit Logs</a>
