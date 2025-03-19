@@ -2,6 +2,46 @@ from flask import render_template, request, jsonify, session, redirect, url_for
 from db import get_db_connection  # Import from db.py
 
 def register_user_routes(app):
+    @app.route('/user/deactivation', methods=['GET', 'POST'])
+    def userDeactivation():
+        # Connect to the database
+        mydb = get_db_connection()
+        my_cursor = mydb.cursor()
+
+        try:
+            # Process form data
+            data = request.get_json()
+            item_id = data['id']
+            codeId=data['codeId']
+            deactivation = 0
+
+            # Perform the update operation
+            my_cursor.execute("""
+                UPDATE users
+                SET status = %s WHERE id = %s
+            """, (deactivation, item_id))
+
+            # Log the update to the audit log
+            my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                            (session['username'], f"Deactivate an item in Inventory with code ID: {codeId}"))
+
+            # Commit changes to the database
+            mydb.commit()
+
+            # Return a success response
+            return jsonify({"message": "Inventory Deactivate successfully!"}), 200
+
+        except Exception as e:
+            # Capture the exact error for logging and return it in the response
+            mydb.rollback()
+            print(f"Error occurred: {e}")  # This will print to your console
+            return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
+
+        finally:
+            # Close the database connection
+            my_cursor.close()
+            mydb.close()
+            
     @app.route('/users')
     def users():
         # Check if 'username' exists in the session
@@ -68,7 +108,7 @@ def register_user_routes(app):
         try:
             # Get the JSON data from the request body
             data = request.get_json()
-            status = data.get('status')
+            status = "1"
             accountType = data.get('accountTypeButton')
             Username = data.get('Username')
             password = data.get('password')

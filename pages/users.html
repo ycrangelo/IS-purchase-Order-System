@@ -156,17 +156,6 @@ content %}
             aria-describedby="basic-addon1"
           />
         </div>
-        <div class="input-group mb-3">
-          <input
-            type="text"
-            id="status1"
-            name="status1"
-            class="form-control"
-            placeholder="Status"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
-        </div>
         <div class="d-flex justify-content-end w-100">
           <button type="button" class="btn btn-success" id="saveAccount">
             Save
@@ -193,6 +182,7 @@ content %}
         <table class="table mt-3">
             <thead>
                 <tr>
+                  <th></th>
                     <th>Username</th>
                     <th>Fullname</th>
                     <th>Status</th>
@@ -201,10 +191,28 @@ content %}
             </thead>
             <tbody>
                 {% for log in logs %}
-                    <tr>
+                
+                    <tr 
+                    data-id="{{ log[0] }}"
+                    data-fullname="{{ log[2] }}"
+                    >
+                      <td>
+                        <div>
+                            <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#modalEdit">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger" id="deactivation">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                        </div>
+                    </td>
                         <td>{{ log[1] }}</td>  <!-- Username -->
                         <td>{{ log[2] }}</td>  <!-- Action (did) -->
-                        <td>{{ log[3] }}</td>  <!-- Date (YYYY-MM-DD) -->
+                        <td> {% if log[3]|int ==0 %}
+                          <p style="color: red;"> Deactivate</p>
+                      {% else %}
+                          <p style="color: green;">Active</p>
+                      {% endif %}</td>  <!-- Date (YYYY-MM-DD) -->
                         <td>{{ log[4] }}</td>  <!-- Time (12-hour format with AM/PM) -->
                     </tr>
                 {% endfor %}
@@ -222,7 +230,7 @@ content %}
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- JavaScript to update button text -->
@@ -233,6 +241,35 @@ content %}
   }
 </script>
 <script type="text/javascript">
+
+  $(document).on("click", "#deactivation", function (event) {
+      var row = $(this).closest("tr");
+      var id = row.data("id");  // This is the unique id for the inventory item
+      var codeId = row.data("fullname");
+      console.log(codeId)
+      console.log(id)
+         $.ajax({
+           url: "{{url_for('userDeactivation')}}",
+           type: "POST",
+           contentType: "application/json",
+           data: JSON.stringify({
+            id: id,
+            codeId:codeId
+           }),
+           success: function (response) {
+            setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+             console.log(response);
+           },
+           error: function (error) {
+             console.log(error);
+           },
+         });
+       
+    });
+
   $(document).on("click", "#saveAccountType", function (event) {
     var status = $.trim($("#status").val()); // No need for encodeURI unless you're sending data to a server
     var accountType = $.trim($("#accountType").val()); // No need for encodeURI unless you're sending data to a server
@@ -257,7 +294,6 @@ content %}
   });
 
   $(document).on("click", "#saveAccount", function (event) {
-    var status = $.trim($("#status1").val()); // No need for encodeURI unless you're sending data to a server
     var fullname = $.trim($("#fullname").val()); // No need for encodeURI unless you're sending data to a server
     var password = $.trim($("#password").val());
     var Username = $.trim($("#username").val());
@@ -274,10 +310,6 @@ content %}
       console.log(isOk);
     }
     if (Username == "") {
-      isOk++;
-      console.log(isOk);
-    }
-    if (status == "") {
       isOk++;
       console.log(isOk);
     }
@@ -308,7 +340,6 @@ content %}
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({ 
-            status: status, 
             fullname: fullname, 
             password: password,
             Username: Username,
