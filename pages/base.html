@@ -50,9 +50,9 @@
     {% if show_sidebar %}
     <div class="sidebar">
        <div>
-        <a href="{{ url_for('auditlogs') }}">Audit Logs</a>
         <a href="{{ url_for('inventory') }}">Inventory</a>
         <a href="{{ url_for('users') }}">Users</a>
+        <a href="{{ url_for('auditlogs') }}">Audit Logs</a>
        </div>
        <form action="/logout">
         <div class="d-flex justify-content-center border-1 w-100">

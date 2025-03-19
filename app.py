@@ -123,7 +123,7 @@ def inventory():
     # Handle POST request (form submission)
     
     # Fetch inventory data for both GET and POST requests
-    my_cursor.execute("SELECT * FROM inventory WHERE status != 0 ORDER BY created_at DESC")
+    my_cursor.execute("SELECT * FROM inventory ORDER BY created_at DESC")
     logs = my_cursor.fetchall()  # Fetch all rows
 
     # Format the date and time for each log entry
@@ -133,7 +133,7 @@ def inventory():
         log_date = log[5].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
         log_time = log[5].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
         
-        formatted_logs.append((log[0], log[1], log[2], log[3],log[4], log_date, log_time,log[6]))
+        formatted_logs.append((log[0], log[1], log[2], log[3],log[4], log_date, log_time,log[6],log[7]))
 
     # Close cursor and database connection
     my_cursor.close()
@@ -311,6 +311,48 @@ def inventoryDeactivation():
 
         # Return a success response
         return jsonify({"message": "Inventory Deactivate successfully!"}), 200
+
+    except Exception as e:
+        # Capture the exact error for logging and return it in the response
+        mydb.rollback()
+        print(f"Error occurred: {e}")  # This will print to your console
+        return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
+
+    finally:
+        # Close the database connection
+        my_cursor.close()
+        mydb.close()
+
+@app.route('/inventory/edit/quantity', methods=['GET', 'POST'])
+def inventoryEditQuantity():
+    # Connect to the database
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    try:
+        # Process form data
+        data = request.get_json()
+
+        # Extract values from the request data
+        description = data.get('description')
+        quantity = data.get('quantity')
+        item_id = data['id']
+
+        # Perform the update operation
+        my_cursor.execute("""
+            UPDATE inventory
+            SET desription = %s, quantity = %s WHERE id = %s
+        """, (description, quantity, item_id))
+
+        # Log the update to the audit log
+        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                          (session['username'], f"Edited quantity an item in Inventory with Quantity: {quantity}, Description: {description}"))
+
+        # Commit changes to the database
+        mydb.commit()
+
+        # Return a success response
+        return jsonify({"message": "Inventory updated successfully!"}), 200
 
     except Exception as e:
         # Capture the exact error for logging and return it in the response
