@@ -1,11 +1,509 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    accounttype
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-row justify-content-between">
+    <h1>Inventory</h1>
+   <!-- Button to trigger modal -->
+<button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Create
+</button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Inventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="error-message" style="display: none">
+                    Please fill up correctly. make sure the Price and Quantity are numbers.
+                  </h5>
+                    <div class="input-group mb-3">
+                        <input type="text" id="codeId" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                      <div class="input-group mb-3">
+                        <input type="text" id="description" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                      <div class="input-group mb-3">
+                        <input type="text" id="location" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                      <div class="input-group mb-3">
+                        <input type="text" id="price" name="price" class="form-control" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                      <div class="input-group mb-3">
+                        <input type="text" id="quantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                    <div class="d-flex justify-content-end w-100">
+                        <button type="button" class="btn btn-success" id="saveInventory">Save</button>
+                    </div>
+            </div>                    
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal edit -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="modalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEdit">Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="error-message-edit" style="display: none">
+                    Please fill up correctly. make sure the Price and Quantity are numbers.
+                  </h5>
+                    <div class="input-group mb-3">
+                      <span style="font-weight: 700;" class="">Code ID:</span>
+                        <div class="input-group">
+                            <input type="text" id="codeIdEdit" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <span style="font-weight: 700;" class="">Description:</span>
+                        <div class="input-group">
+                        <input type="text" id="descriptionEdit" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <span style="font-weight: 700;" class="">Location:</span>
+                        <div class="input-group">
+                        <input type="text" id="locationEdit" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <span style="font-weight: 700;" class="">Price:</span>
+                        <div class="input-group">
+                        <input type="text" id="priceEdit" name="price" class="form-control" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                      <div class="input-group mb-3">
+                        <span style="font-weight: 700;" class="">Quantity:</span>
+                        <div class="input-group">
+                        <input type="text" id="quantityEdit" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                      </div>
+                    <div class="d-flex justify-content-end w-100">
+                        <button type="button" class="btn btn-success" id="saveEditInventory">Save</button>
+                    </div>
+            </div>                    
+        </div>
+    </div>
+</div>
+
+<!-- Modal edit quantity -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="modalEditQuantity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="modalEdit">Edit Item</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h5 id="error-message-edit-quantity" style="display: none">
+                  Please fill up correctly. make sure the Quantity is a number.
+                </h5>
+                    <div class="input-group mb-3">
+                      <span style="font-weight: 700;" class="">Description:</span>
+                      <div class="input-group">
+                      <input disabled type="text" id="descriptionEditQuantity" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                    </div>
+                    <div class="input-group mb-3">
+                      <span style="font-weight: 700;" class="">Quantity:</span>
+                      <div class="input-group">
+                      <input type="text" id="quantityEditQuantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
+                  </div>
+                    </div>
+                  <div class="d-flex justify-content-end w-100">
+                      <button type="button" class="btn btn-success" id="saveEditInventoryQuantity">Save</button>
+                  </div>
+          </div>                    
+      </div>
+  </div>
+</div>
+
+{% if logs %}
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>status</th>
+                    </tr>
+                </thead>
+                <tbody>
+    {% for log in logs %}
+    <tr data-id="{{ log[0] }}" 
+    data-codeid="{{ log[1] }}"
+    data-description="{{ log[2] }}"
+    data-location="{{ log[3] }}"
+    data-price="{{ log[7] }}"
+    data-quantity="{{ log[4] }}">
+    <td>
+        <div>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalEditQuantity" id="editQuantity">
+                <i class="bi bi-exposure"></i>
+            </button>
+            <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#modalEdit">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+            <button type="button" class="btn btn-danger" id="deactivation">
+                <i class="bi bi-x-circle-fill"></i>
+            </button>
+        </div>
+    </td>
+    <td>{{ log[2] }}</td>
+    <td>{{ log[3] }}</td> 
+    <td class="d-flex">
+        {% if log[4]|int < 20 %}
+            <p style="color: red;">{{ log[4] }}</p>
+        {% else %}
+            <p style="color: green;">{{ log[4] }}</p>
+        {% endif %}
+    </td>                           
+    <td>{{ log[7] }}</td> 
+    <td class="">
+      {% if log[8]|int ==0 %}
+          <p style="color: red;"> Deactivate</p>
+      {% else %}
+          <p style="color: green;">Active</p>
+      {% endif %}
+  </td> 
+</tr>
+    {% endfor %}
+</tbody>
+            </table>
+        {% else %}
+            <p>No logs found.</p>
+        {% endif %}
+</div>
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS and dependencies -->
+ <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Include the full version of jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS (including Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript">
+  $(document).on("click", "#editQuantity", function () {
+    // Get the row that was clicked
+    var row = $(this).closest("tr");
+
+    // Extract the data from the row
+    var description = row.data("description");
+    var quantity = row.data("quantity");
+    var id = row.data("id");  // This is the unique id for the inventory item
+
+    // Populate the modal with the extracted data
+    $("#modalEditQuantity #descriptionEditQuantity").val(description);
+    $("#modalEditQuantity #quantityEditQuantity").val(quantity);
+
+    // Store the id (unique identifier) of the inventory item in the modal for later use
+    $("#modalEditQuantity").data("itemId", id);
+});
+
+
+    //for edit quantity item
+    $(document).on("click", "#saveEditInventoryQuantity", function (event) {
+      var description = $.trim($("#descriptionEditQuantity").val()); // No need for encodeURI unless you're sending data 
+      var quantity = $.trim($("#quantityEditQuantity").val());
+      var itemId = $("#modalEditQuantity").data("itemId");
+       console.log("description:", description);
+       console.log("quantity:", quantity);
+       console.log("itemId:", itemId);
+       
+  
+      var isOk = 0;
+      if (description == "") {
+        isOk++;
+        console.log(isOk);
+      }
+        // Regular expression to check if the value is not a number
+        const regex = /^(?!\d+$).*/;
+
+        if (quantity === "" || regex.test(quantity)) {
+        isOk++;
+        console.log(isOk);
+        }
+  
+       if (isOk > 0) {
+         $("#error-message-edit-quantity").css({
+           display: "block", // Show the element
+           color: "red", // Change the text color to red
+         });
+         isOk=0;
+         setTimeout(function () {
+           $("#error-message-edit-quantity").css({
+             display: "none", // Show the element
+             color: "red", 
+           });
+         }, 4000);
+       } 
+        else {
+          $.ajax({
+            url: "{{url_for('inventoryEditQuantity')}}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ 
+                id:itemId,
+                description: description,
+                quantity:quantity
+
+            }),
+            success: function (response) {
+             setTimeout(function () {
+           location.reload();
+         }, 500);
+         console.log(response);
+              console.log(response);
+            },
+            error: function (error) {
+              console.log(error);
+            },
+          });
+        }
+    });
+
+
+
+$(document).on("click", "#deactivation", function (event) {
+      var row = $(this).closest("tr");
+      var id = row.data("id");  // This is the unique id for the inventory item
+      var codeId = row.data("codeid");
+         $.ajax({
+           url: "{{url_for('inventoryDeactivation')}}",
+           type: "POST",
+           contentType: "application/json",
+           data: JSON.stringify({
+            id: id,
+            codeId:codeId
+           }),
+           success: function (response) {
+            setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+             console.log(response);
+           },
+           error: function (error) {
+             console.log(error);
+           },
+         });
+       
+    });
+
+$(document).on("click", ".edit-btn", function () {
+    // Get the row that was clicked
+    var row = $(this).closest("tr");
+
+    // Extract the data from the row
+    var codeId = row.data("codeid");
+    var description = row.data("description");
+    var location = row.data("location");
+    var price = row.data("price");
+    var quantity = row.data("quantity");
+    var id = row.data("id");  // This is the unique id for the inventory item
+
+    // Populate the modal with the extracted data
+    $("#modalEdit #codeIdEdit").val(codeId);
+    $("#modalEdit #descriptionEdit").val(description);
+    $("#modalEdit #locationEdit").val(location);
+    $("#modalEdit #priceEdit").val(price);
+    $("#modalEdit #quantityEdit").val(quantity);
+
+    // Store the id (unique identifier) of the inventory item in the modal for later use
+    $("#modalEdit").data("itemId", id);
+});
+
+
+    
+    $(document).on("click", "#saveInventory", function (event) {
+      var codeId = $.trim($("#codeId").val()); // No need for encodeURI unless you're sending data to a server
+      var description = $.trim($("#description").val()); // No need for encodeURI unless you're sending data to a server
+      var locationn = $.trim($("#location").val());
+      var price = $.trim($("#price").val());
+      var quantity = $.trim($("#quantity").val());
+      var itemId = $("#modalEdit").data("itemId");
+    //    var accountTypeButton = $.trim($("#accountTypeButton").text());
+       console.log("codeId:", codeId);
+       console.log("description:", description);
+       console.log("location:", locationn);
+       console.log("price:", price);
+       console.log("quantity:", quantity);
+       
+  
+      var isOk = 0;
+      if (codeId == "") {
+        isOk++;
+        console.log(isOk);
+      }
+      if (description == "") {
+        isOk++;
+        console.log(isOk);
+      }
+      if (locationn == "") {
+        isOk++;
+        console.log(isOk);
+      }
+        // Regular expression to check if the value is not a number
+        const regex = /^(?!\d+$).*/;
+
+        // Check if price or quantity is empty or doesn't match a number
+        if (price === "" || regex.test(price)) {
+        isOk++;
+        console.log(isOk);
+        }
+
+        if (quantity === "" || regex.test(quantity)) {
+        isOk++;
+        console.log(isOk);
+        }
+  
+      if (isOk > 0) {
+        $("#error-message").css({
+          display: "block", // Show the element
+          color: "red", // Change the text color to red
+        });
+        isOk=0;
+        setTimeout(function () {
+          $("#error-message").css({
+            display: "none", // Show the element
+            color: "red", // Change the text color to red
+          });
+        }, 4000);
+      } 
+       else {
+         $.ajax({
+           url: "{{url_for('inventoryCreate')}}",
+           type: "POST",
+           contentType: "application/json",
+           data: JSON.stringify({
+               codeId: codeId, 
+               description: description,
+               location: locationn,
+               price: price,
+               quantity:quantity
+
+           }),
+           success: function (response) {
+            setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+             console.log(response);
+           },
+           error: function (error) {
+             console.log(error);
+           },
+         });
+       }
+    });
+
+
+    //for edit item
+    $(document).on("click", "#saveEditInventory", function (event) {
+      var codeId = $.trim($("#codeIdEdit").val()); // No need for encodeURI unless you're sending data to a server
+      var description = $.trim($("#descriptionEdit").val()); // No need for encodeURI unless you're sending data to a server
+      var locationn = $.trim($("#locationEdit").val());
+      var price = $.trim($("#priceEdit").val());
+      var quantity = $.trim($("#quantityEdit").val());
+      var itemId = $("#modalEdit").data("itemId");
+    //    var accountTypeButton = $.trim($("#accountTypeButton").text());
+       console.log("codeId:", codeId);
+       console.log("description:", description);
+       console.log("location:", locationn);
+       console.log("price:", price);
+       console.log("quantity:", quantity);
+       console.log("itemId:", itemId);
+       
+  
+      var isOk = 0;
+      if (codeId == "") {
+        isOk++;
+        console.log(isOk);
+      }
+      if (description == "") {
+        isOk++;
+        console.log(isOk);
+      }
+      if (locationn == "") {
+        isOk++;
+        console.log(isOk);
+      }
+        // Regular expression to check if the value is not a number
+        const regex = /^(?!\d+$).*/;
+
+        // Check if price or quantity is empty or doesn't match a number
+        if (price === "" || regex.test(price)) {
+        isOk++;
+        console.log(isOk);
+        }
+
+        if (quantity === "" || regex.test(quantity)) {
+        isOk++;
+        console.log(isOk);
+        }
+  
+      if (isOk > 0) {
+        $("#error-message-edit").css({
+          display: "block", // Show the element
+          color: "red", // Change the text color to red
+        });
+        isOk=0;
+        setTimeout(function () {
+          $("#error-message-edit").css({
+            display: "none", // Show the element
+            color: "red", // Change the text color to red
+          });
+        }, 4000);
+      } 
+       else {
+         $.ajax({
+           url: "{{url_for('inventoryEdit')}}",
+           type: "POST",
+           contentType: "application/json",
+           data: JSON.stringify({ 
+               id:itemId,
+               codeId: codeId, 
+               description: description,
+               location: locationn,
+               price: price,
+               quantity:quantity
+
+           }),
+           success: function (response) {
+            setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+             console.log(response);
+           },
+           error: function (error) {
+             console.log(error);
+           },
+         });
+       }
+    });
+  </script>
+{% endblock %}

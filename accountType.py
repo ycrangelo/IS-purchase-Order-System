@@ -9,4 +9,4 @@ def register_accountType_routes(app):
             # If not logged in, redirect to the login page
             return redirect(url_for('home'))
         
-        return render_template('accountType.html', show_sidebar=False)
+        return render_template('accountType.html', show_sidebar=True)
