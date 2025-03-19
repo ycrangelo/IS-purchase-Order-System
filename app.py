@@ -123,7 +123,7 @@ def inventory():
     # Handle POST request (form submission)
     
     # Fetch inventory data for both GET and POST requests
-    my_cursor.execute("SELECT * FROM inventory ORDER BY created_at DESC")
+    my_cursor.execute("SELECT * FROM inventory WHERE status != 0 ORDER BY created_at DESC")
     logs = my_cursor.fetchall()  # Fetch all rows
 
     # Format the date and time for each log entry
@@ -236,6 +236,91 @@ def createAccount():
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
-    
+
+@app.route('/inventory/edit', methods=['GET', 'POST'])
+def inventoryEdit():
+    # Connect to the database
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    try:
+        # Process form data
+        data = request.get_json()
+
+        # Extract values from the request data
+        codeId = data.get('codeId')
+        description = data.get('description')
+        location = data.get('location')
+        quantity = data.get('quantity')
+        price = data.get('price')
+        item_id = data['id']
+
+        # Perform the update operation
+        my_cursor.execute("""
+            UPDATE inventory
+            SET desription = %s, location = %s, quantity = %s, price = %s, code_id = %s
+            WHERE id = %s
+        """, (description, location, quantity, price, codeId, item_id))
+
+        # Log the update to the audit log
+        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                          (session['username'], f"Edited an item in Inventory with code ID: {codeId}, Description: {description}"))
+
+        # Commit changes to the database
+        mydb.commit()
+
+        # Return a success response
+        return jsonify({"message": "Inventory updated successfully!"}), 200
+
+    except Exception as e:
+        # Capture the exact error for logging and return it in the response
+        mydb.rollback()
+        print(f"Error occurred: {e}")  # This will print to your console
+        return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
+
+    finally:
+        # Close the database connection
+        my_cursor.close()
+        mydb.close()
+
+@app.route('/inventory/deactivation', methods=['GET', 'POST'])
+def inventoryDeactivation():
+    # Connect to the database
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    try:
+        # Process form data
+        data = request.get_json()
+        item_id = data['id']
+        codeId=data['codeId']
+        deactivation = 0
+
+        # Perform the update operation
+        my_cursor.execute("""
+            UPDATE inventory
+            SET status = %s WHERE id = %s
+        """, (deactivation, item_id))
+
+        # Log the update to the audit log
+        my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                        (session['username'], f"Deactivate an item in Inventory with code ID: {codeId}"))
+
+        # Commit changes to the database
+        mydb.commit()
+
+        # Return a success response
+        return jsonify({"message": "Inventory Deactivate successfully!"}), 200
+
+    except Exception as e:
+        # Capture the exact error for logging and return it in the response
+        mydb.rollback()
+        print(f"Error occurred: {e}")  # This will print to your console
+        return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
+
+    finally:
+        # Close the database connection
+        my_cursor.close()
+        mydb.close()
 if __name__ == '__main__':
     app.run(debug=True)
