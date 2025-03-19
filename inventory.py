@@ -113,13 +113,29 @@ def register_inventory_routes(app):
             data = request.get_json()
             item_id = data['id']
             codeId=data['codeId']
-            deactivation = 0
-
-            # Perform the update operation
-            my_cursor.execute("""
+            print(item_id)
+            my_cursor.execute("SELECT status FROM inventory WHERE id = %s", (item_id,))
+            logs = my_cursor.fetchone()  # Fetch all rows
+            user_status = logs[0]
+            print("this is the status:",user_status)
+            if user_status ==1:
+                deactivation = 0
+                print("inside ==1")
+                # Perform the update operation
+                my_cursor.execute("""
+                UPDATE inventory
+                SET status = %s WHERE id = %s
+                """, (deactivation, item_id))
+                mydb.commit()
+            if user_status ==0:
+                print("inside ==0")
+                deactivation = 1
+                # Perform the update operation
+                my_cursor.execute("""
                 UPDATE inventory
                 SET status = %s WHERE id = %s
             """, (deactivation, item_id))
+                mydb.commit()
 
             # Log the update to the audit log
             my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 

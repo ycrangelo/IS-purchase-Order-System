@@ -13,14 +13,27 @@ def register_user_routes(app):
             data = request.get_json()
             item_id = data['id']
             codeId=data['codeId']
-            deactivation = 0
-
-            # Perform the update operation
-            my_cursor.execute("""
-                UPDATE users
-                SET status = %s WHERE id = %s
-            """, (deactivation, item_id))
-
+            
+            my_cursor.execute("SELECT status FROM users WHERE id = %s", (item_id,))
+            logs = my_cursor.fetchone()  # Fetch all rows
+            user_status = logs[0]
+            print(logs)
+            if user_status =="1":
+                deactivation = 0
+                # Perform the update operation
+                my_cursor.execute("""
+                    UPDATE users
+                    SET status = %s WHERE id = %s
+                """, (deactivation, item_id))
+                mydb.commit()
+            if user_status =="0":
+                deactivation = 1
+                # Perform the update operation
+                my_cursor.execute("""
+                    UPDATE users
+                    SET status = %s WHERE id = %s
+                """, (deactivation, item_id))
+                mydb.commit()
             # Log the update to the audit log
             my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
                             (session['username'], f"Deactivate an item in Inventory with code ID: {codeId}"))
@@ -62,7 +75,7 @@ def register_user_routes(app):
         # Format the date and time for each log entry
         formatted_logs = []
         for log in logs:
-            formatted_logs.append((log[0], log[1], log[3], log[4], log[5]))
+            formatted_logs.append((log[0], log[1], log[3], log[4], log[5],log[2]))
         formatted_account_type = []
         for account_types in account_type:
             formatted_account_type.append((account_types[1]))
@@ -127,3 +140,38 @@ def register_user_routes(app):
         except Exception as e:
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 500
+    @app.route('/users/changepass', methods=['GET', 'POST'])
+    def change_password():
+        mydb = get_db_connection()
+        my_cursor = mydb.cursor()
+
+        data = request.get_json()
+        new_password = data.get('newPassword')
+        user_id = data.get('id')
+
+        try:
+            # Update the user's password in the database
+            my_cursor.execute(
+                "UPDATE users SET password = %s WHERE id = %s",
+                (new_password, user_id)
+            )
+
+            # Log the password change (optional)
+            my_cursor.execute(
+                "INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                (session['username'], f"Changed password for user ID: {user_id}")
+            )
+
+            # Commit changes to the database
+            mydb.commit()
+
+            return jsonify({"message": "Password changed successfully"}), 200
+
+        except Exception as e:
+            mydb.rollback()
+            return jsonify({"error": str(e)}), 500
+
+        finally:
+            my_cursor.close()
+            mydb.close()
+
