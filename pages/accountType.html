@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="d-flex flex-row justify-content-between">
-    <h1>Inventory</h1>
+    <h1>Account Type</h1>
    <!-- Button to trigger modal -->
 <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
     Create
@@ -134,11 +134,8 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Description</th>
-                        <th>Location</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>status</th>
+                        <th>Account Type</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -146,9 +143,7 @@
     <tr data-id="{{ log[0] }}" 
     data-codeid="{{ log[1] }}"
     data-description="{{ log[2] }}"
-    data-location="{{ log[3] }}"
-    data-price="{{ log[7] }}"
-    data-quantity="{{ log[4] }}">
+    data-location="{{ log[3] }}">
     <td>
         <div>
             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalEditQuantity" id="editQuantity">
@@ -162,23 +157,8 @@
             </button>
         </div>
     </td>
-    <td>{{ log[2] }}</td>
-    <td>{{ log[3] }}</td> 
-    <td class="d-flex">
-        {% if log[4]|int < 20 %}
-            <p style="color: red;">{{ log[4] }}</p>
-        {% else %}
-            <p style="color: green;">{{ log[4] }}</p>
-        {% endif %}
-    </td>                           
-    <td>{{ log[7] }}</td> 
-    <td class="">
-      {% if log[8]|int ==0 %}
-          <p style="color: red;"> Deactivate</p>
-      {% else %}
-          <p style="color: green;">Active</p>
-      {% endif %}
-  </td> 
+    <td>{{ log[1] }}</td>
+    <td>{{ log[2] }}</td>                          
 </tr>
     {% endfor %}
 </tbody>
