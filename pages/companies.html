@@ -1,8 +1,5 @@
-{% extends "base.html" %}
-
-{% block title %}Users{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Users{% endblock %} {% block content
+%}
 
 <!-- Modal account type -->
 <div
@@ -94,7 +91,7 @@
               placeholder="Password"
               aria-label="Username"
               aria-describedby="basic-addon1"
-              disabled  
+              disabled
             />
           </div>
         </div>
@@ -108,7 +105,7 @@
               class="form-control"
               placeholder="Password"
               aria-label="Username"
-              aria-describedby="basic-addon1"  
+              aria-describedby="basic-addon1"
             />
           </div>
         </div>
@@ -144,7 +141,9 @@
         ></button>
       </div>
       <div class="modal-body">
-        <h3 id="error-message" style="display: none">Please fill up correctly</h3>
+        <h3 id="error-message" style="display: none">
+          Please fill up correctly
+        </h3>
         <!-- Dropdown for account type -->
         <div class="input-group mb-3 mt-3">
           <input
@@ -180,16 +179,94 @@
           />
         </div>
         <div class="input-group mb-3">
+          <input
+            type="text"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Password"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveCompany">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal user update -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="EditUser"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Company</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h3 id="error-message" style="display: none">
+          Please fill up correctly
+        </h3>
+        <!-- Dropdown for account type -->
+        <div class="input-group mb-3">
+          <span style="font-weight: 700" class="">Company Name:</span>
+          <div class="input-group">
             <input
               type="text"
-              id="password"
-              name="password"
+              id="editCompanyName"
+              name="description"
               class="form-control"
-              placeholder="Password"
+              placeholder="Company Name"
               aria-label="Username"
               aria-describedby="basic-addon1"
             />
           </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700" class="">Contact Person:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="editContactPerson"
+              name="description"
+              class="form-control"
+              placeholder="Contact Person"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700" class="">Username:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="editUsername"
+              name="description"
+              class="form-control"
+              placeholder="Username"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
         <div class="d-flex justify-content-end w-100">
           <button type="button" class="btn btn-success" id="saveCompany">
             Save
@@ -227,9 +304,12 @@
       <tbody>
         {% for log in logs %}
         <tr
-          data-id="{{ log[0] }}"
-          data-fullname="{{ log[2] }}"
-          data-password="{{ log[4] }}"
+          data-id ="{{ log[0] }}"
+          data-company-name ="{{ log[1] }}"
+          data-contact-person ="{{ log[2] }}"
+          data-username ="{{ log[3] }}"
+          data-password ="{{ log[4] }}"
+          data-status ="{{ log[6] }}"
         >
           <td>
             <div>
@@ -239,16 +319,16 @@
                 data-bs-toggle="modal"
                 data-bs-target="#modalChangePassword"
               >
-              <i class="bi bi-person-fill-lock"></i>
+                <i class="bi bi-person-fill-lock"></i>
               </button>
               <button
-              type="button"
-              class="btn btn-warning edit-btn"
-              data-bs-toggle="modal"
-              data-bs-target="#modalChangePassword"
-            >
-            <i class="bi bi-pencil-square"></i>
-            </button>
+                type="button"
+                class="btn btn-warning edit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#EditUser"
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
               <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
               </button>
@@ -294,67 +374,86 @@
 
 <!-- JavaScript for AJAX and other functionality -->
 <script type="text/javascript">
+  $(document).on("click", "#savechangePass", function (event) {
+    var passwordEditNew = $.trim($("#passwordEditNew").val()); // Fixed typo: removed extra space
+    var itemId = $("#modalChangePassword").data("itemId"); // Get the itemId from the modal
 
-$(document).on("click", "#savechangePass", function (event) {
-  var passwordEditNew = $.trim($("#passwordEditNew").val()); // Fixed typo: removed extra space
-  var itemId = $("#modalChangePassword").data("itemId"); // Get the itemId from the modal
+    console.log("itemId:", itemId);
+    console.log("passwordEditNew:", passwordEditNew);
 
-  console.log("itemId:", itemId);
-  console.log("passwordEditNew:", passwordEditNew);
+    var isOk = 0;
+    if (passwordEditNew == "") {
+      isOk++;
+      console.log(isOk);
+    }
 
-  var isOk = 0;
-  if (passwordEditNew == "") {
-    isOk++;
-    console.log(isOk);
-  }
-
-  if (isOk > 0) {
-    $("#error-message-password").css({
-      display: "block", // Show the element
-      color: "red", // Change the text color to red
-    });
-    isOk = 0;
-    setTimeout(function () {
+    if (isOk > 0) {
       $("#error-message-password").css({
-        display: "none", // Show the element
+        display: "block", // Show the element
         color: "red", // Change the text color to red
       });
-    }, 4000);
-  } else {
-    $.ajax({
-      url: "{{url_for('comChange_password')}}", // Ensure this URL matches your Flask route
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({
-        id: itemId, // Use itemId instead of codeId
-        newPassword: passwordEditNew, // Send only the new password
-      }),
-      success: function (response) {
-        setTimeout(function () {
-          location.reload();
-        }, 500);
-        console.log(response);
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
-  }
-});
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message-password").css({
+          display: "none", // Show the element
+          color: "red", // Change the text color to red
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('comChange_password')}}", // Ensure this URL matches your Flask route
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          id: itemId, // Use itemId instead of codeId
+          newPassword: passwordEditNew, // Send only the new password
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
 
-$(document).on("click", ".edit-password", function () {
-  // Get the row that was clicked
-  var row = $(this).closest("tr");
-  // Extract the data from the row
-  var fullname = row.data("fullname");
-  var password = row.data("password");
-  var id = row.data("id"); // This is the unique id for the user
+  $(document).on("click", ".edit-password", function () {
+    // Get the row that was clicked
+    var row = $(this).closest("tr");
+    // Extract the data from the row
+    var fullname = row.data("fullname");
+    var password = row.data("password");
+    var id = row.data("id"); // This is the unique id for the user
 
-  // Populate the modal with the extracted data
-  $("#modalChangePassword #passwordEdit").val(password);
-  // Store the id (unique identifier) of the user in the modal for later use
-  $("#modalChangePassword").data("itemId", id);
-});
+    // Populate the modal with the extracted data
+    $("#modalChangePassword #passwordEdit").val(password);
+    // Store the id (unique identifier) of the user in the modal for later use
+    $("#modalChangePassword").data("itemId", id);
+  });
+
+  $(document).on("click", ".edit-btn", function () {
+    // Get the row that was clicked
+    var row = $(this).closest("tr");
+    // Extract the data from the row
+    var companyName = row.data("companyName");
+    var contactPerson = row.data("contactPerson");
+    var username = row.data("username");
+    var id = row.data("id"); // This is the unique id for the user
+    console.log(companyName)
+    console.log(contactPerson)
+    console.log(username)
+
+    // Populate the modal with the extracted data
+    $("#EditUser #editCompanyName").val(companyName);
+    $("#EditUser #editContactPerson").val(contactPerson);
+    $("#EditUser #editUsername").val(username);
+    // Store the id (unique identifier) of the user in the modal for later use
+    $("#EditUser").data("itemId", id);
+  });
 
   $(document).on("click", "#deactivation", function (event) {
     var row = $(this).closest("tr");
@@ -382,18 +481,16 @@ $(document).on("click", ".edit-password", function () {
     });
   });
 
-
   $(document).on("click", "#saveCompany", function (event) {
     var companyName = $.trim($("#companyName").val());
     var contactPerson = $.trim($("#contactPerson").val());
     var username = $.trim($("#username").val());
     var password = $.trim($("#password").val());
 
-    console.log(`company name ${companyName}`)
-    console.log(`contactPerson ${contactPerson}`)
-    console.log(`username  ${username }`)
-    console.log(`password ${password}`)
-    
+    console.log(`company name ${companyName}`);
+    console.log(`contactPerson ${contactPerson}`);
+    console.log(`username  ${username}`);
+    console.log(`password ${password}`);
 
     var isOk = 0;
     if (companyName == "") {
