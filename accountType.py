@@ -117,3 +117,38 @@ def register_accountType_routes(app):
             # Close the database connection
             my_cursor.close()
             mydb.close()
+            
+    @app.route('/accountType((s/changeAccountType', methods=['GET', 'POST'])
+    def changeAccountType():
+        mydb = get_db_connection()
+        my_cursor = mydb.cursor()
+
+        data = request.get_json()
+        account_type = data.get('accountType')
+        user_id = data.get('id')
+
+        try:
+            # Update the user's password in the database
+            my_cursor.execute(
+                "UPDATE account_type SET account_type = %s WHERE id = %s",
+                (account_type, user_id)
+            )
+
+            # Log the password change (optional)
+            my_cursor.execute(
+                "INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                (session['username'], f"Changed account_type for ID: {user_id}")
+            )
+
+            # Commit changes to the database
+            mydb.commit()
+
+            return jsonify({"message": "Password changed successfully"}), 200
+
+        except Exception as e:
+            mydb.rollback()
+            return jsonify({"error": str(e)}), 500
+
+        finally:
+            my_cursor.close()
+            mydb.close()

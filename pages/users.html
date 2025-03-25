@@ -400,28 +400,6 @@ $(document).on("click", ".edit-btn", function () {
     });
   });
 
-  $(document).on("click", "#saveAccountType", function (event) {
-    var status = $.trim($("#status").val());
-    var accountType = $.trim($("#accountType").val());
-    console.log("Status:", status);
-    console.log("Account Type:", accountType);
-
-    $.ajax({
-      url: "{{url_for('createAccountType')}}",
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({ status: status, accountType: accountType }),
-      success: function (response) {
-        setTimeout(function () {
-          location.reload();
-        }, 500);
-        console.log(response);
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
-  });
 
   $(document).on("click", "#saveAccount", function (event) {
     var fullname = $.trim($("#fullname").val());
