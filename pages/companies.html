@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+
+<!-- Modal account type -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Account Type</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="accountType"
+            name="accountType"
+            class="form-control"
+            placeholder="Account Type"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="status"
+            name="status"
+            class="form-control"
+            placeholder="Status"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveAccountType">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal edit -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="modalChangePassword"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEdit">Change Password</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h5 id="error-message-password" style="display: none">
+          Please fill up correctly.
+        </h5>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700"> Old Password:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="passwordEdit"
+              name="quantity"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              disabled  
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700"> New Password:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="passwordEditNew"
+              name="quantity"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Username"
+              aria-describedby="basic-addon1"  
+            />
+          </div>
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="savechangePass">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal user -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="createUser"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Company</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h3 id="error-message" style="display: none">Please fill up correctly</h3>
+        <!-- Dropdown for account type -->
+        <div class="input-group mb-3 mt-3">
+          <input
+            type="text"
+            id="companyName"
+            name="companyName"
+            class="form-control"
+            placeholder="Company Name"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="contactPerson"
+            name="contactPerson"
+            class="form-control"
+            placeholder="Contact Person"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="User Name"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+            <input
+              type="text"
+              id="password"
+              name="password"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveCompany">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="">
+  <div class="d-flex justify-content-between w-100">
+    <h1>Companies</h1>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#createUser"
+    >
+      Create company
+    </button>
+  </div>
+  <div class="container">
+    {% if logs %}
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Company Name</th>
+          <th>Contact Person</th>
+          <th>Username</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr
+          data-id="{{ log[0] }}"
+          data-fullname="{{ log[2] }}"
+          data-password="{{ log[5] }}"
+        >
+          <td>
+            <div>
+              <button
+                type="button"
+                class="btn btn-warning edit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#modalChangePassword"
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button type="button" class="btn btn-danger" id="deactivation">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+          </td>
+          <td>{{ log[1] }}</td>
+          <td>{{ log[2] }}</td>
+          <td>{{ log[3] }}</td>
+          <td>
+            {% if log[6]|int ==0 %}
+            <p style="color: red">Deactivate</p>
+            {% else %}
+            <p style="color: green">Active</p>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No logs found.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<!-- Bootstrap JS (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript to update button text -->
+<script>
+  function updateButtonText(selectedText) {
+    // Update the button text with the selected item
+    document.getElementById("accountTypeButton").innerText = selectedText;
+  }
+</script>
+
+<!-- JavaScript for AJAX and other functionality -->
+<script type="text/javascript">
+
+$(document).on("click", "#savechangePass", function (event) {
+  var passwordEditNew = $.trim($("#passwordEditNew").val()); // Fixed typo: removed extra space
+  var itemId = $("#modalChangePassword").data("itemId"); // Get the itemId from the modal
+
+  console.log("itemId:", itemId);
+  console.log("passwordEditNew:", passwordEditNew);
+
+  var isOk = 0;
+  if (passwordEditNew == "") {
+    isOk++;
+    console.log(isOk);
+  }
+
+  if (isOk > 0) {
+    $("#error-message-password").css({
+      display: "block", // Show the element
+      color: "red", // Change the text color to red
+    });
+    isOk = 0;
+    setTimeout(function () {
+      $("#error-message-password").css({
+        display: "none", // Show the element
+        color: "red", // Change the text color to red
+      });
+    }, 4000);
+  } else {
+    $.ajax({
+      url: "{{url_for('change_password')}}", // Ensure this URL matches your Flask route
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        id: itemId, // Use itemId instead of codeId
+        newPassword: passwordEditNew, // Send only the new password
+      }),
+      success: function (response) {
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  }
+});
+
+$(document).on("click", ".edit-btn", function () {
+  // Get the row that was clicked
+  var row = $(this).closest("tr");
+  // Extract the data from the row
+  var fullname = row.data("fullname");
+  var password = row.data("password");
+  var id = row.data("id"); // This is the unique id for the user
+
+  // Populate the modal with the extracted data
+  $("#modalChangePassword #passwordEdit").val(password);
+  // Store the id (unique identifier) of the user in the modal for later use
+  $("#modalChangePassword").data("itemId", id);
+});
+
+  $(document).on("click", "#deactivation", function (event) {
+    var row = $(this).closest("tr");
+    var id = row.data("id"); // This is the unique id for the inventory item
+    var codeId = row.data("fullname");
+    console.log(codeId);
+    console.log(id);
+    $.ajax({
+      url: "{{url_for('userDeactivation')}}",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        id: id,
+        codeId: codeId,
+      }),
+      success: function (response) {
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+
+
+  $(document).on("click", "#saveCompany", function (event) {
+    var companyName = $.trim($("#companyName").val());
+    var contactPerson = $.trim($("#contactPerson").val());
+    var username = $.trim($("#username").val());
+    var password = $.trim($("#password").val());
+
+    console.log(`company name ${companyName}`)
+    console.log(`contactPerson ${contactPerson}`)
+    console.log(`username  ${username }`)
+    console.log(`password ${password}`)
+    
+
+    var isOk = 0;
+    if (companyName == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (contactPerson == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (username == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (password == "") {
+      isOk++;
+      console.log(isOk);
+    }
+
+    if (isOk > 0) {
+      $("#error-message").css({
+        display: "block", // Show the element
+        color: "red", // Change the text color to red
+      });
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message").css({
+          display: "none", // Show the element
+          color: "red", // Change the text color to red
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('createCompany')}}",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          companyName: companyName,
+          contactPerson: contactPerson,
+          username: username,
+          password: password,
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+</script>
+{% endblock %}

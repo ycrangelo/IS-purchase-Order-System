@@ -5,6 +5,7 @@ from inventory import register_inventory_routes
 from dashboard import register_dashboard_routes
 from auditlogs import register_auditLogs_routes  # Import the audit logs routes
 from accountType import register_accountType_routes 
+from companies import register_companies_routes 
 
 app = Flask(__name__, template_folder='pages')
 app.secret_key = 'your_strong_random_secret_key_here'
@@ -15,6 +16,7 @@ register_inventory_routes(app)
 register_dashboard_routes(app)
 register_auditLogs_routes(app)  # Register audit logs routes
 register_accountType_routes(app)
+register_companies_routes(app)
 
 # Home route
 @app.route('/')
