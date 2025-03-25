@@ -245,7 +245,7 @@ $(document).on("click", "#deactivation", function (event) {
       var id = row.data("id");  // This is the unique id for the inventory item
       var codeId = row.data("codeid");
          $.ajax({
-           url: "{{url_for('inventoryDeactivation')}}",
+           url: "{{url_for('accountTypeDeactivation')}}",
            type: "POST",
            contentType: "application/json",
            data: JSON.stringify({
