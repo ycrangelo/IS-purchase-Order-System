@@ -1,0 +1,672 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase Order{% endblock %}
+
+{% block content %}
+
+<!-- Modal account type -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Account Type</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="accountType"
+            name="accountType"
+            class="form-control"
+            placeholder="Account Type"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="status"
+            name="status"
+            class="form-control"
+            placeholder="Status"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveAccountType">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal edit -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="modalChangePassword"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEdit">Change Password</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h5 id="error-message-password" style="display: none">
+          Please fill up correctly.
+        </h5>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700"> Old Password:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="passwordEdit"
+              name="quantity"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              disabled  
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700"> New Password:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="passwordEditNew"
+              name="quantity"
+              class="form-control"
+              placeholder="Password"
+              aria-label="Username"
+              aria-describedby="basic-addon1"  
+            />
+          </div>
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="savechangePass">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal user -->
+<div
+  class="modal fade"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  id="createUser"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Account</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h3 id="error-message" style="display: none">Please fill up correctly</h3>
+        <!-- Dropdown for account type -->
+        <div class="dropdown">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="accountTypeButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Account type
+          </button>
+          <ul
+            class="dropdown-menu"
+            aria-labelledby="accountTypeButton"
+            style="max-height: 200px; overflow-y: auto;"
+          >
+            {% for log in code_id %}
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                onclick="updateButtonText('{{ log }}')"
+                >{{ log }}</a
+              >
+            </li>
+            {% else %}
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                onclick="updateButtonText('No account types found')"
+                >No account types found</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="input-group mb-3 mt-3">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="Username"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Password"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="fullname"
+            name="fullname"
+            class="form-control"
+            placeholder="Fullname"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <div class="d-flex justify-content-end w-100">
+          <button type="button" class="btn btn-success" id="saveAccount">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="">
+  <div class="d-flex justify-content-between w-100">
+    <h1>Purchase Order</h1>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#createUser"
+    >
+      Add Purchase Order
+    </button>
+  </div>
+  
+  <!-- Search Bar -->
+  
+  <div class="container">
+    <div class="mb-3 mt-5 d-flex flex-row align-items-center">
+      <label for="searchInput" class="me-2">Search</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="searchInput" 
+        placeholder="Search users..." 
+        style="max-width: 10rem;"
+      >
+    </div>
+    {% if logs %}
+    <table class="table mt-3" id="usersTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Username</th>
+          <th>Fullname</th>
+          <th>Status</th>
+          <th>Account type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr
+          data-id="{{ log[0] }}"
+          data-fullname="{{ log[2] }}"
+          data-password="{{ log[5] }}"
+        >
+          <td>
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary edit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#modalChangePassword"
+              >
+                <i class="bi bi-person-fill-lock"></i>
+              </button>
+              <button type="button" class="btn btn-danger" id="deactivation">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+          </td>
+          <td>{{ log[1] }}</td>
+          <td>{{ log[2] }}</td>
+          <td>
+            {% if log[3]|int ==0 %}
+            <p style="color: red">Deactivate</p>
+            {% else %}
+            <p style="color: green">Active</p>
+            {% endif %}
+          </td>
+          <td>{{ log[4] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination links will be added by JavaScript -->
+      </ul>
+  </nav>
+    
+    {% else %}
+    <p>No logs found.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<!-- Bootstrap JS (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript to update button text -->
+<script>
+  function updateButtonText(selectedText) {
+    // Update the button text with the selected item
+    document.getElementById("accountTypeButton").innerText = selectedText;
+  }
+</script>
+
+<!-- JavaScript for AJAX, pagination, and search functionality -->
+<script type="text/javascript">
+$(document).ready(function() {
+    // Initialize variables
+    var rowsPerPage = 10;
+    var $table = $('#usersTable');
+    var $tbody = $table.find('tbody');
+    var $originalRows = $tbody.find('tr');
+    var $rows = $originalRows;
+    var totalRows = $rows.length;
+    var pageCount = Math.ceil(totalRows / rowsPerPage);
+    var currentPage = 1;
+    var maxVisiblePages = 6; // Maximum number of visible page buttons
+    
+    // Create a no results row
+    var $noResults = $('<tr><td colspan="5" class="text-center">No results found</td></tr>');
+    
+    // Function to initialize pagination
+    function initPagination() {
+        var $pagination = $('#pagination');
+        $pagination.empty();
+        
+        // Add Previous button
+        $pagination.append('<li class="page-item"><a class="page-link" href="#" id="prevPage">&laquo;</a></li>');
+        
+        // Calculate range of pages to show
+        var startPage, endPage;
+        if (pageCount <= maxVisiblePages) {
+            startPage = 1;
+            endPage = pageCount;
+        } else {
+            var maxPagesBeforeCurrent = Math.floor(maxVisiblePages / 2);
+            var maxPagesAfterCurrent = Math.ceil(maxVisiblePages / 2) - 1;
+            
+            if (currentPage <= maxPagesBeforeCurrent) {
+                startPage = 1;
+                endPage = maxVisiblePages;
+            } else if (currentPage + maxPagesAfterCurrent >= pageCount) {
+                startPage = pageCount - maxVisiblePages + 1;
+                endPage = pageCount;
+            } else {
+                startPage = currentPage - maxPagesBeforeCurrent;
+                endPage = currentPage + maxPagesAfterCurrent;
+            }
+        }
+        
+        // Add first page with ellipsis if needed
+        if (startPage > 1) {
+            $pagination.append('<li class="page-item"><a class="page-link" href="#">1</a></li>');
+            if (startPage > 2) {
+                $pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+            }
+        }
+        
+        // Add page numbers in range
+        for (var i = startPage; i <= endPage; i++) {
+            var activeClass = i === currentPage ? ' active' : '';
+            $pagination.append(
+                '<li class="page-item' + activeClass + '"><a class="page-link" href="#">' + i + '</a></li>'
+            );
+        }
+        
+        // Add last page with ellipsis if needed
+        if (endPage < pageCount) {
+            if (endPage < pageCount - 1) {
+                $pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+            }
+            $pagination.append('<li class="page-item"><a class="page-link" href="#">' + pageCount + '</a></li>');
+        }
+        
+        // Add Next button
+        $pagination.append('<li class="page-item"><a class="page-link" href="#" id="nextPage">&raquo;</a></li>');
+        
+        // Show stored page or first page by default
+        var storedPage = localStorage.getItem('usersCurrentPage');
+        if (storedPage && storedPage <= pageCount) {
+            currentPage = parseInt(storedPage);
+        }
+        showPage(currentPage);
+    }
+    
+    // Load stored search term if exists
+    var storedSearch = localStorage.getItem('usersLastSearch');
+    if (storedSearch) {
+        $('#searchInput').val(storedSearch);
+        performSearch(storedSearch);
+    } else {
+        initPagination();
+    }
+    
+    // Pagination click handlers
+    $('#pagination').on('click', 'a.page-link:not(#prevPage):not(#nextPage)', function(e) {
+        e.preventDefault();
+        currentPage = parseInt($(this).text());
+        localStorage.setItem('usersCurrentPage', currentPage);
+        showPage(currentPage);
+        initPagination(); // Rebuild pagination to center on current page
+    });
+    
+    $('#prevPage').on('click', function(e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            localStorage.setItem('usersCurrentPage', currentPage);
+            showPage(currentPage);
+            initPagination();
+        }
+    });
+    
+    $('#nextPage').on('click', function(e) {
+        e.preventDefault();
+        if (currentPage < pageCount) {
+            currentPage++;
+            localStorage.setItem('usersCurrentPage', currentPage);
+            showPage(currentPage);
+            initPagination();
+        }
+    });
+    
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        var searchText = $(this).val().toLowerCase();
+        localStorage.setItem('usersLastSearch', searchText);
+        performSearch(searchText);
+    });
+    
+    // Function to perform search
+    function performSearch(searchText) {
+        // Remove no results row if it exists
+        $noResults.detach();
+        
+        if (searchText === '') {
+            // If search is empty, reset to original state
+            localStorage.removeItem('usersLastSearch');
+            $rows = $originalRows;
+            totalRows = $rows.length;
+            pageCount = Math.ceil(totalRows / rowsPerPage);
+            currentPage = 1;
+            initPagination();
+            return;
+        }
+        
+        // Filter rows
+        var hasResults = false;
+        $rows = $originalRows.filter(function() {
+            var rowText = $(this).text().toLowerCase();
+            var isMatch = rowText.indexOf(searchText) > -1;
+            if (isMatch) hasResults = true;
+            return isMatch;
+        });
+        
+        totalRows = $rows.length;
+        pageCount = Math.ceil(totalRows / rowsPerPage);
+        currentPage = 1;
+        
+        // Show no results message if no matches
+        if (!hasResults) {
+            $tbody.append($noResults);
+        }
+        
+        // Reinitialize pagination with filtered results
+        initPagination();
+    }
+    
+    // Function to show specific page
+    function showPage(pageNum) {
+        var startIndex = (pageNum - 1) * rowsPerPage;
+        var endIndex = startIndex + rowsPerPage;
+        
+        // Hide all rows
+        $originalRows.hide();
+        
+        // Show either the no results message or the paginated rows
+        if ($noResults.is(':visible')) {
+            $noResults.show();
+        } else {
+            $rows.slice(startIndex, endIndex).show();
+        }
+        
+        // Update active page in pagination
+        $('#pagination').find('li').removeClass('active');
+        $('#pagination').find('a').each(function() {
+            if ($(this).text() == pageNum && !$(this).is('#prevPage, #nextPage')) {
+                $(this).parent().addClass('active');
+            }
+        });
+        
+        // Enable/disable Previous and Next buttons
+        $('#prevPage').parent().toggleClass('disabled', pageNum <= 1);
+        $('#nextPage').parent().toggleClass('disabled', pageNum >= pageCount);
+    }
+});
+
+
+  $(document).on("click", "#savechangePass", function (event) {
+    var passwordEditNew = $.trim($("#passwordEditNew").val());
+    var itemId = $("#modalChangePassword").data("itemId");
+
+    console.log("itemId:", itemId);
+    console.log("passwordEditNew:", passwordEditNew);
+
+    var isOk = 0;
+    if (passwordEditNew == "") {
+      isOk++;
+      console.log(isOk);
+    }
+
+    if (isOk > 0) {
+      $("#error-message-password").css({
+        display: "block",
+        color: "red",
+      });
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message-password").css({
+          display: "none",
+          color: "red",
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('change_password')}}",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          id: itemId,
+          newPassword: passwordEditNew,
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+
+  $(document).on("click", ".edit-btn", function () {
+    var row = $(this).closest("tr");
+    var fullname = row.data("fullname");
+    var password = row.data("password");
+    var id = row.data("id");
+
+    $("#modalChangePassword #passwordEdit").val(password);
+    $("#modalChangePassword").data("itemId", id);
+  });
+
+  $(document).on("click", "#deactivation", function (event) {
+    var row = $(this).closest("tr");
+    var id = row.data("id");
+    var codeId = row.data("fullname");
+    console.log(codeId);
+    console.log(id);
+    $.ajax({
+      url: "{{url_for('userDeactivation')}}",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+        id: id,
+        codeId: codeId,
+      }),
+      success: function (response) {
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+        console.log(response);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+
+  $(document).on("click", "#saveAccount", function (event) {
+    var fullname = $.trim($("#fullname").val());
+    var password = $.trim($("#password").val());
+    var Username = $.trim($("#username").val());
+    var accountTypeButton = $.trim($("#accountTypeButton").text());
+
+    var isOk = 0;
+    if (accountTypeButton == "Account type") {
+      isOk = 1;
+      console.log(isOk);
+    }
+    if (Username == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (fullname == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    if (password == "") {
+      isOk++;
+      console.log(isOk);
+    }
+
+    if (isOk > 0) {
+      $("#error-message").css({
+        display: "block",
+        color: "red",
+      });
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message").css({
+          display: "none",
+          color: "red",
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('createAccount')}}",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          fullname: fullname,
+          password: password,
+          Username: Username,
+          accountTypeButton: accountTypeButton,
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+</script>
+{% endblock %}
