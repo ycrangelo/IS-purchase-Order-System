@@ -183,35 +183,38 @@
           </ul>
         </div>
 
-        <div class="input-group mb-3 mt-3">
+        <div class="input-group mb-3 mt-3 d-flex flex-row align-items-center gap-2">
+          <label class="fw-bold" for="">Description</label>
           <input
             type="text"
-            id="username"
-            name="username"
+            id="description"
+            name="description"
             class="form-control"
-            placeholder="Username"
+            placeholder="Description"
             aria-label="Username"
             aria-describedby="basic-addon1"
           />
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 d-flex flex-row align-items-center gap-2">
+          <label class="fw-bold" for="">Price/Unit</label>
           <input
             type="text"
-            id="password"
-            name="password"
+            id="pricePerUnit"
+            name="pricePerUnit"
             class="form-control"
-            placeholder="Password"
+            placeholder="Price Per Unit"
             aria-label="Username"
             aria-describedby="basic-addon1"
           />
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 d-flex flex-row align-items-center gap-2">
+          <label class="fw-bold" for="">Quantity</label>
           <input
             type="text"
-            id="fullname"
-            name="fullname"
+            id="quantity"
+            name="quantity"
             class="form-control"
-            placeholder="Fullname"
+            placeholder="Quantity"
             aria-label="Username"
             aria-describedby="basic-addon1"
           />
@@ -329,6 +332,7 @@
   function updateButtonText(selectedText) {
     // Update the button text with the selected item
     document.getElementById("accountTypeButton").innerText = selectedText;
+    document.getElementById("pricePerUnit").innerText = selectedText;
   }
 </script>
 

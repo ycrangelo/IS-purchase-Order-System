@@ -30,12 +30,12 @@ def register_purchase_order_routes(app):
         mydb = get_db_connection()
         my_cursor = mydb.cursor()
 
-        my_cursor.execute("SELECT code_id FROM inventory ORDER BY created_at DESC")
+        my_cursor.execute("SELECT code_id,price FROM inventory ORDER BY created_at DESC")
         code_id = my_cursor.fetchall()  # Fetch all rows
                 # Format the date and time for each log entry
         formatted_code_id = []
         for log in code_id:
-            formatted_code_id.append((log[0]))
+         formatted_code_id = [(log[0], log[1]) for log in code_id]
         # Close cursor and database connection
         my_cursor.close()
         mydb.close()
