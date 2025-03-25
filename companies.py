@@ -155,3 +155,49 @@ def register_companies_routes(app):
         finally:
             my_cursor.close()
             mydb.close()
+            
+    @app.route('/companies/edit', methods=['GET', 'POST'])
+    def companiesEdit():
+        # Connect to the database
+        mydb = get_db_connection()
+        my_cursor = mydb.cursor()
+
+        try:
+            # Process form data
+            data = request.get_json()
+
+            # Extract values from the request data
+            editCompanyName = data.get('editCompanyName')
+            editContactPerson = data.get('editContactPerson')
+            EditUsername = data.get('EditUsername')
+            print(editCompanyName)
+            print(editContactPerson)
+            print(EditUsername)
+            item_id = data['id']
+
+            # Perform the update operation
+            my_cursor.execute("""
+            UPDATE companies
+            SET company_name = %s, contact_person = %s, username = %s
+            WHERE id = %s
+        """, (editCompanyName, editContactPerson, EditUsername, item_id))
+            # Log the update to the audit log
+            my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                            (session['username'], f"Edited Company Details with code ID: {item_id}"))
+
+            # Commit changes to the database
+            mydb.commit()
+
+            # Return a success response
+            return jsonify({"message": "Inventory updated successfully!"}), 200
+
+        except Exception as e:
+            # Capture the exact error for logging and return it in the response
+            mydb.rollback()
+            print(f"Error occurred: {e}")  # This will print to your console
+            return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
+
+        finally:
+            # Close the database connection
+            my_cursor.close()
+            mydb.close()

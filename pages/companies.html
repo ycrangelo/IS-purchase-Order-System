@@ -141,7 +141,7 @@
         ></button>
       </div>
       <div class="modal-body">
-        <h3 id="error-message" style="display: none">
+        <h3 id="error-message-edit-company" style="display: none">
           Please fill up correctly
         </h3>
         <!-- Dropdown for account type -->
@@ -268,7 +268,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-end w-100">
-          <button type="button" class="btn btn-success" id="saveCompany">
+          <button type="button" class="btn btn-success" id="saveEditCompany">
             Save
           </button>
         </div>
@@ -374,6 +374,71 @@
 
 <!-- JavaScript for AJAX and other functionality -->
 <script type="text/javascript">
+  
+
+  $(document).on("click", "#saveEditCompany", function (event) {
+    var editCompanyName = $.trim($("#editCompanyName").val()); // Fixed typo: removed extra space
+    var editContactPerson = $.trim($("#editContactPerson").val()); // Fixed typo: removed extra space
+    var EditUsername = $.trim($("#editUsername").val()); // Fixed typo: removed extra space
+    var itemId = $("#EditUser").data("itemId"); // Get the itemId from the modal
+
+    console.log('username here :',EditUsername)
+    console.log('editContactPerson here :',editContactPerson)
+    console.log('editCompanyName here :',editCompanyName)
+
+    console.log("itemId:", itemId);
+
+    var isOk = 0;
+    if (editCompanyName == "") {
+      isOk++;
+      console.log(" editCompanyName isok:",isOk);
+    }
+    if (editContactPerson == "") {
+      isOk++;
+      console.log(" editContactPerson isok:",isOk);
+    }
+    if (EditUsername == "") {
+      isOk++;
+      console.log(" EditUsername isok:",isOk);
+    }
+
+    if (isOk > 0) {
+      $("#error-message-edit-company").css({
+        display: "block", // Show the element
+        color: "red", // Change the text color to red
+      });
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message-edit-company").css({
+          display: "none", // Show the element
+          color: "red", // Change the text color to red
+        });
+      }, 4000);
+    }
+     else {
+      $.ajax({
+        url: "{{url_for('companiesEdit')}}", // Ensure this URL matches your Flask route
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          id: itemId, // Use itemId instead of codeId
+          editCompanyName: editCompanyName, // Send only the new password
+          editContactPerson:editContactPerson,
+          EditUsername:EditUsername
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+
   $(document).on("click", "#savechangePass", function (event) {
     var passwordEditNew = $.trim($("#passwordEditNew").val()); // Fixed typo: removed extra space
     var itemId = $("#modalChangePassword").data("itemId"); // Get the itemId from the modal
@@ -439,8 +504,8 @@
     // Get the row that was clicked
     var row = $(this).closest("tr");
     // Extract the data from the row
-    var companyName = row.data("companyName");
-    var contactPerson = row.data("contactPerson");
+    var companyName = row.data("company-name");
+    var contactPerson = row.data("contact-person");
     var username = row.data("username");
     var id = row.data("id"); // This is the unique id for the user
     console.log(companyName)
@@ -458,7 +523,7 @@
   $(document).on("click", "#deactivation", function (event) {
     var row = $(this).closest("tr");
     var id = row.data("id"); // This is the unique id for the inventory item
-    var codeId = row.data("fullname");
+    var codeId = row.data("company-name");
     console.log(codeId);
     console.log(id);
     $.ajax({
