@@ -16,30 +16,21 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Create Inventory</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Create Account Type</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h5 id="error-message" style="display: none">
-                    Please fill up correctly. make sure the Price and Quantity are numbers.
+                    Please fill up correctly.
                   </h5>
                     <div class="input-group mb-3">
-                        <input type="text" id="codeId" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
+                        <input type="text" id="accountType" name="accountType" class="form-control" placeholder="Account Type" aria-label="Username" aria-describedby="basic-addon1">
                       </div>
                       <div class="input-group mb-3">
-                        <input type="text" id="description" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="location" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="price" name="price" class="form-control" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input type="text" id="quantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
+                        <input type="text" id="status" name="status" class="form-control" placeholder="Status" aria-label="Username" aria-describedby="basic-addon1">
                       </div>
                     <div class="d-flex justify-content-end w-100">
-                        <button type="button" class="btn btn-success" id="saveInventory">Save</button>
+                        <button type="button" class="btn btn-success" id="saveAccountType">Save</button>
                     </div>
             </div>                    
         </div>
@@ -52,45 +43,27 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalEdit">Edit Item</h5>
+                <h5 class="modal-title" id="modalEdit">Edit Account Type</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h5 id="error-message-edit" style="display: none">
-                    Please fill up correctly. make sure the Price and Quantity are numbers.
+                    Please fill up correctly.
                   </h5>
                     <div class="input-group mb-3">
-                      <span style="font-weight: 700;" class="">Code ID:</span>
+                      <span style="font-weight: 700;" class="">Account Type:</span>
                         <div class="input-group">
-                            <input type="text" id="codeIdEdit" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
+                            <input type="text" id="accountTypeEdit" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
                       </div>
                       <div class="input-group mb-3">
-                        <span style="font-weight: 700;" class="">Description:</span>
+                        <span style="font-weight: 700;" class="">Status:</span>
                         <div class="input-group">
-                        <input type="text" id="descriptionEdit" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
+                        <input type="text" id="statusEdit" name="description" class="form-control" placeholder="Status" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
-                      </div>
-                      <div class="input-group mb-3">
-                        <span style="font-weight: 700;" class="">Location:</span>
-                        <div class="input-group">
-                        <input type="text" id="locationEdit" name="location" class="form-control" placeholder="Location" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
-                      </div>
-                      <div class="input-group mb-3">
-                        <span style="font-weight: 700;" class="">Price:</span>
-                        <div class="input-group">
-                        <input type="text" id="priceEdit" name="price" class="form-control" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
-                      </div>
-                      <div class="input-group mb-3">
-                        <span style="font-weight: 700;" class="">Quantity:</span>
-                        <div class="input-group">
-                        <input type="text" id="quantityEdit" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
                       </div>
                     <div class="d-flex justify-content-end w-100">
-                        <button type="button" class="btn btn-success" id="saveEditInventory">Save</button>
+                        <button type="button" class="btn btn-success" id="saveEditAccountType">Save</button>
                     </div>
             </div>                    
         </div>
@@ -146,9 +119,9 @@
     data-location="{{ log[3] }}">
     <td>
         <div>
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalEditQuantity" id="editQuantity">
+            <!-- <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalEditQuantity" id="editQuantity">
                 <i class="bi bi-exposure"></i>
-            </button>
+            </button> -->
             <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#modalEdit">
                 <i class="bi bi-pencil-square"></i>
             </button>
@@ -308,9 +281,6 @@ $(document).on("click", ".edit-btn", function () {
     // Populate the modal with the extracted data
     $("#modalEdit #codeIdEdit").val(codeId);
     $("#modalEdit #descriptionEdit").val(description);
-    $("#modalEdit #locationEdit").val(location);
-    $("#modalEdit #priceEdit").val(price);
-    $("#modalEdit #quantityEdit").val(quantity);
 
     // Store the id (unique identifier) of the inventory item in the modal for later use
     $("#modalEdit").data("itemId", id);
@@ -318,48 +288,23 @@ $(document).on("click", ".edit-btn", function () {
 
 
     
-    $(document).on("click", "#saveInventory", function (event) {
-      var codeId = $.trim($("#codeId").val()); // No need for encodeURI unless you're sending data to a server
-      var description = $.trim($("#description").val()); // No need for encodeURI unless you're sending data to a server
-      var locationn = $.trim($("#location").val());
-      var price = $.trim($("#price").val());
-      var quantity = $.trim($("#quantity").val());
-      var itemId = $("#modalEdit").data("itemId");
+    $(document).on("click", "#saveAccountType", function (event) {
+      var accountType = $.trim($("#accountType").val()); // No need for encodeURI unless you're sending data to a server
+      var status = $.trim($("#status").val()); // No need for encodeURI unless you're sending data to a server
     //    var accountTypeButton = $.trim($("#accountTypeButton").text());
-       console.log("codeId:", codeId);
-       console.log("description:", description);
-       console.log("location:", locationn);
-       console.log("price:", price);
-       console.log("quantity:", quantity);
+       console.log("accountType:", accountType);
+       console.log("status:", status);
        
   
       var isOk = 0;
-      if (codeId == "") {
+      if (accountType == "") {
         isOk++;
         console.log(isOk);
       }
-      if (description == "") {
+      if (status == "") {
         isOk++;
         console.log(isOk);
       }
-      if (locationn == "") {
-        isOk++;
-        console.log(isOk);
-      }
-        // Regular expression to check if the value is not a number
-        const regex = /^(?!\d+$).*/;
-
-        // Check if price or quantity is empty or doesn't match a number
-        if (price === "" || regex.test(price)) {
-        isOk++;
-        console.log(isOk);
-        }
-
-        if (quantity === "" || regex.test(quantity)) {
-        isOk++;
-        console.log(isOk);
-        }
-  
       if (isOk > 0) {
         $("#error-message").css({
           display: "block", // Show the element
@@ -375,16 +320,12 @@ $(document).on("click", ".edit-btn", function () {
       } 
        else {
          $.ajax({
-           url: "{{url_for('inventoryCreate')}}",
+           url: "{{url_for('createAccountType')}}",
            type: "POST",
            contentType: "application/json",
            data: JSON.stringify({
-               codeId: codeId, 
-               description: description,
-               location: locationn,
-               price: price,
-               quantity:quantity
-
+               accountType: accountType, 
+               status: status,
            }),
            success: function (response) {
             setTimeout(function () {

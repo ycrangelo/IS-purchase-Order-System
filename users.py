@@ -87,31 +87,6 @@ def register_user_routes(app):
         # Pass the formatted logs to the template
         return render_template('users.html', logs=formatted_logs, formatted_account_type=formatted_account_type, show_sidebar=True)
 
-    @app.route('/users/create/accountType', methods=['GET', 'POST'])
-    def createAccountType():
-        mydb = get_db_connection()
-        my_cursor = mydb.cursor()
-        
-        try:
-            # Get the JSON data from the request body
-            data = request.get_json()
-            
-            status = data.get('status')
-            accountType = data.get('accountType')
-            
-            print(f"Status: {status}, Account Type: {accountType}")
-
-            # Ensure data is not empty before proceeding with the insert
-            if status and accountType:
-                my_cursor.execute("INSERT INTO account_type (account_type, status) VALUES (%s, %s)", (accountType, status))
-                my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], f"Created account type: {accountType} With status: {status} "))
-                mydb.commit()
-                return jsonify({"message": "Account Type created successfully!"}), 200
-            else:
-                return jsonify({"error": "Missing data!"}), 400
-        except Exception as e:
-            print(f"Error: {e}")
-            return jsonify({"error": str(e)}), 500
         
     @app.route('/users/create/account', methods=['GET', 'POST'])
     def createAccount():
