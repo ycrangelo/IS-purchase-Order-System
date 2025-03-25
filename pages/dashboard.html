@@ -130,12 +130,13 @@
       </div>
   </div>
 </div>
-<div class="mb-3 mt-1">
+<div class="mb-3 mt-5 d-flex flex-row align-items-center">
+  <label for="searchInput" class="me-2">Search</label>
   <input 
     type="text" 
     class="form-control" 
     id="searchInput" 
-    placeholder="Search item..." 
+    placeholder="Search users..." 
     style="max-width: 10rem;"
   >
 </div>
@@ -284,7 +285,7 @@
         $pagination.append('<li class="page-item"><a class="page-link" href="#" id="nextPage">&raquo;</a></li>');
         
         // Show stored page or first page by default
-        var storedPage = localStorage.getItem('usersCurrentPage');
+        var storedPage = localStorage.getItem('dashboardCurrentPage');
         if (storedPage && storedPage <= pageCount) {
             currentPage = parseInt(storedPage);
         }
@@ -292,7 +293,7 @@
     }
     
     // Load stored search term if exists
-    var storedSearch = localStorage.getItem('usersLastSearch');
+    var storedSearch = localStorage.getItem('dashboardLastSearch');
     if (storedSearch) {
         $('#searchInput').val(storedSearch);
         performSearch(storedSearch);
@@ -304,7 +305,7 @@
     $('#pagination').on('click', 'a.page-link:not(#prevPage):not(#nextPage)', function(e) {
         e.preventDefault();
         currentPage = parseInt($(this).text());
-        localStorage.setItem('usersCurrentPage', currentPage);
+        localStorage.setItem('dashboardCurrentPage', currentPage);
         showPage(currentPage);
         initPagination(); // Rebuild pagination to center on current page
     });
@@ -313,7 +314,7 @@
         e.preventDefault();
         if (currentPage > 1) {
             currentPage--;
-            localStorage.setItem('usersCurrentPage', currentPage);
+            localStorage.setItem('dashboardCurrentPage', currentPage);
             showPage(currentPage);
             initPagination();
         }
@@ -323,7 +324,7 @@
         e.preventDefault();
         if (currentPage < pageCount) {
             currentPage++;
-            localStorage.setItem('usersCurrentPage', currentPage);
+            localStorage.setItem('dashboardCurrentPage', currentPage);
             showPage(currentPage);
             initPagination();
         }
@@ -332,7 +333,7 @@
     // Search functionality
     $('#searchInput').on('keyup', function() {
         var searchText = $(this).val().toLowerCase();
-        localStorage.setItem('usersLastSearch', searchText);
+        localStorage.setItem('dashboardLastSearch', searchText);
         performSearch(searchText);
     });
     
@@ -343,7 +344,7 @@
         
         if (searchText === '') {
             // If search is empty, reset to original state
-            localStorage.removeItem('usersLastSearch');
+            localStorage.removeItem('dashboardLastSearch');
             $rows = $originalRows;
             totalRows = $rows.length;
             pageCount = Math.ceil(totalRows / rowsPerPage);

@@ -7,15 +7,16 @@
     <h1>Audit Logs</h1>
     
     <!-- Search Bar -->
-    <div class="mb-3 mt-5">
+    <div class="mb-3 mt-5 d-flex flex-row align-items-center">
+        <label for="searchInput" class="me-2">Search</label>
         <input 
-            type="text" 
-            class="form-control" 
-            id="searchInput" 
-            placeholder="Search logs..." 
-            style="max-width: 10rem;"
+          type="text" 
+          class="form-control" 
+          id="searchInput" 
+          placeholder="Search users..." 
+          style="max-width: 10rem;"
         >
-    </div>
+      </div>
 
     {% if logs %}
         <table class="table" id="auditLogsTable">
