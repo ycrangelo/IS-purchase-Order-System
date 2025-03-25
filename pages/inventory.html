@@ -128,9 +128,17 @@
       </div>
   </div>
 </div>
-
+<div class="mb-3 mt-5">
+  <input 
+    type="text" 
+    class="form-control" 
+    id="searchInput" 
+    placeholder="Search item..." 
+    style="max-width: 10rem;"
+  >
+</div>
 {% if logs %}
-            <table class="table mt-3">
+            <table class="table mt-3" id="usersTable">
                 <thead>
                     <tr>
                         <th></th>
@@ -186,6 +194,12 @@
         {% else %}
             <p>No logs found.</p>
         {% endif %}
+            <!-- Pagination -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination links will be added by JavaScript -->
+      </ul>
+  </nav>
 </div>
 <!-- Include jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -206,6 +220,197 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
+  $(document).ready(function() {
+    // Initialize variables
+    var rowsPerPage = 10;
+    var $table = $('#usersTable');
+    var $tbody = $table.find('tbody');
+    var $originalRows = $tbody.find('tr');
+    var $rows = $originalRows;
+    var totalRows = $rows.length;
+    var pageCount = Math.ceil(totalRows / rowsPerPage);
+    var currentPage = 1;
+    var maxVisiblePages = 6; // Maximum number of visible page buttons
+    
+    // Create a no results row
+    var $noResults = $('<tr><td colspan="5" class="text-center">No results found</td></tr>');
+    
+    // Function to initialize pagination
+    function initPagination() {
+        var $pagination = $('#pagination');
+        $pagination.empty();
+        
+        // Add Previous button
+        $pagination.append('<li class="page-item"><a class="page-link" href="#" id="prevPage">&laquo;</a></li>');
+        
+        // Calculate range of pages to show
+        var startPage, endPage;
+        if (pageCount <= maxVisiblePages) {
+            startPage = 1;
+            endPage = pageCount;
+        } else {
+            var maxPagesBeforeCurrent = Math.floor(maxVisiblePages / 2);
+            var maxPagesAfterCurrent = Math.ceil(maxVisiblePages / 2) - 1;
+            
+            if (currentPage <= maxPagesBeforeCurrent) {
+                startPage = 1;
+                endPage = maxVisiblePages;
+            } else if (currentPage + maxPagesAfterCurrent >= pageCount) {
+                startPage = pageCount - maxVisiblePages + 1;
+                endPage = pageCount;
+            } else {
+                startPage = currentPage - maxPagesBeforeCurrent;
+                endPage = currentPage + maxPagesAfterCurrent;
+            }
+        }
+        
+        // Add first page with ellipsis if needed
+        if (startPage > 1) {
+            $pagination.append('<li class="page-item"><a class="page-link" href="#">1</a></li>');
+            if (startPage > 2) {
+                $pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+            }
+        }
+        
+        // Add page numbers in range
+        for (var i = startPage; i <= endPage; i++) {
+            var activeClass = i === currentPage ? ' active' : '';
+            $pagination.append(
+                '<li class="page-item' + activeClass + '"><a class="page-link" href="#">' + i + '</a></li>'
+            );
+        }
+        
+        // Add last page with ellipsis if needed
+        if (endPage < pageCount) {
+            if (endPage < pageCount - 1) {
+                $pagination.append('<li class="page-item disabled"><span class="page-link">...</span></li>');
+            }
+            $pagination.append('<li class="page-item"><a class="page-link" href="#">' + pageCount + '</a></li>');
+        }
+        
+        // Add Next button
+        $pagination.append('<li class="page-item"><a class="page-link" href="#" id="nextPage">&raquo;</a></li>');
+        
+        // Show stored page or first page by default
+        var storedPage = localStorage.getItem('usersCurrentPage');
+        if (storedPage && storedPage <= pageCount) {
+            currentPage = parseInt(storedPage);
+        }
+        showPage(currentPage);
+    }
+    
+    // Load stored search term if exists
+    var storedSearch = localStorage.getItem('usersLastSearch');
+    if (storedSearch) {
+        $('#searchInput').val(storedSearch);
+        performSearch(storedSearch);
+    } else {
+        initPagination();
+    }
+    
+    // Pagination click handlers
+    $('#pagination').on('click', 'a.page-link:not(#prevPage):not(#nextPage)', function(e) {
+        e.preventDefault();
+        currentPage = parseInt($(this).text());
+        localStorage.setItem('usersCurrentPage', currentPage);
+        showPage(currentPage);
+        initPagination(); // Rebuild pagination to center on current page
+    });
+    
+    $('#prevPage').on('click', function(e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            localStorage.setItem('usersCurrentPage', currentPage);
+            showPage(currentPage);
+            initPagination();
+        }
+    });
+    
+    $('#nextPage').on('click', function(e) {
+        e.preventDefault();
+        if (currentPage < pageCount) {
+            currentPage++;
+            localStorage.setItem('usersCurrentPage', currentPage);
+            showPage(currentPage);
+            initPagination();
+        }
+    });
+    
+    // Search functionality
+    $('#searchInput').on('keyup', function() {
+        var searchText = $(this).val().toLowerCase();
+        localStorage.setItem('usersLastSearch', searchText);
+        performSearch(searchText);
+    });
+    
+    // Function to perform search
+    function performSearch(searchText) {
+        // Remove no results row if it exists
+        $noResults.detach();
+        
+        if (searchText === '') {
+            // If search is empty, reset to original state
+            localStorage.removeItem('usersLastSearch');
+            $rows = $originalRows;
+            totalRows = $rows.length;
+            pageCount = Math.ceil(totalRows / rowsPerPage);
+            currentPage = 1;
+            initPagination();
+            return;
+        }
+        
+        // Filter rows
+        var hasResults = false;
+        $rows = $originalRows.filter(function() {
+            var rowText = $(this).text().toLowerCase();
+            var isMatch = rowText.indexOf(searchText) > -1;
+            if (isMatch) hasResults = true;
+            return isMatch;
+        });
+        
+        totalRows = $rows.length;
+        pageCount = Math.ceil(totalRows / rowsPerPage);
+        currentPage = 1;
+        
+        // Show no results message if no matches
+        if (!hasResults) {
+            $tbody.append($noResults);
+        }
+        
+        // Reinitialize pagination with filtered results
+        initPagination();
+    }
+    
+    // Function to show specific page
+    function showPage(pageNum) {
+        var startIndex = (pageNum - 1) * rowsPerPage;
+        var endIndex = startIndex + rowsPerPage;
+        
+        // Hide all rows
+        $originalRows.hide();
+        
+        // Show either the no results message or the paginated rows
+        if ($noResults.is(':visible')) {
+            $noResults.show();
+        } else {
+            $rows.slice(startIndex, endIndex).show();
+        }
+        
+        // Update active page in pagination
+        $('#pagination').find('li').removeClass('active');
+        $('#pagination').find('a').each(function() {
+            if ($(this).text() == pageNum && !$(this).is('#prevPage, #nextPage')) {
+                $(this).parent().addClass('active');
+            }
+        });
+        
+        // Enable/disable Previous and Next buttons
+        $('#prevPage').parent().toggleClass('disabled', pageNum <= 1);
+        $('#nextPage').parent().toggleClass('disabled', pageNum >= pageCount);
+    }
+});
+
   $(document).on("click", "#editQuantity", function () {
     // Get the row that was clicked
     var row = $(this).closest("tr");
