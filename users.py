@@ -28,7 +28,7 @@ def register_user_routes(app):
                 mydb.commit()
                 # Log the update to the audit log
                 my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                            (session['username'], f"Deactivate an account in Inventory with code ID: {codeId}"))
+                            (session['username'], f"Deactivate an account with code ID: {codeId}"))
             if user_status =="0":
                 deactivation = 1
                 # Perform the update operation
@@ -39,7 +39,7 @@ def register_user_routes(app):
                 mydb.commit()
             # Log the update to the audit log
                 my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                            (session['username'], f"Activate an account in Inventory with code ID: {codeId}"))
+                            (session['username'], f"Activate an account with code ID: {codeId}"))
 
             # Commit changes to the database
             mydb.commit()

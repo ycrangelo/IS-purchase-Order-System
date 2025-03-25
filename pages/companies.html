@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<!-- Modal edit -->
+<!-- Modal edit password -->
 <div
   class="modal fade"
   data-bs-backdrop="static"
@@ -229,18 +229,26 @@
         <tr
           data-id="{{ log[0] }}"
           data-fullname="{{ log[2] }}"
-          data-password="{{ log[5] }}"
+          data-password="{{ log[4] }}"
         >
           <td>
             <div>
               <button
                 type="button"
-                class="btn btn-warning edit-btn"
+                class="btn btn-primary edit-password"
                 data-bs-toggle="modal"
                 data-bs-target="#modalChangePassword"
               >
-                <i class="bi bi-pencil-square"></i>
+              <i class="bi bi-person-fill-lock"></i>
               </button>
+              <button
+              type="button"
+              class="btn btn-warning edit-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#modalChangePassword"
+            >
+            <i class="bi bi-pencil-square"></i>
+            </button>
               <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
               </button>
@@ -314,7 +322,7 @@ $(document).on("click", "#savechangePass", function (event) {
     }, 4000);
   } else {
     $.ajax({
-      url: "{{url_for('change_password')}}", // Ensure this URL matches your Flask route
+      url: "{{url_for('comChange_password')}}", // Ensure this URL matches your Flask route
       type: "POST",
       contentType: "application/json",
       data: JSON.stringify({
@@ -334,7 +342,7 @@ $(document).on("click", "#savechangePass", function (event) {
   }
 });
 
-$(document).on("click", ".edit-btn", function () {
+$(document).on("click", ".edit-password", function () {
   // Get the row that was clicked
   var row = $(this).closest("tr");
   // Extract the data from the row
@@ -355,7 +363,7 @@ $(document).on("click", ".edit-btn", function () {
     console.log(codeId);
     console.log(id);
     $.ajax({
-      url: "{{url_for('userDeactivation')}}",
+      url: "{{url_for('companyDeactivation')}}",
       type: "POST",
       contentType: "application/json",
       data: JSON.stringify({
