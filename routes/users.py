@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify, session, redirect, url_for
-from db import get_db_connection  # Import from db.py
+from routes.db import get_db_connection  # Import from db.py
 
 def register_user_routes(app):
     @app.route('/user/deactivation', methods=['GET', 'POST'])

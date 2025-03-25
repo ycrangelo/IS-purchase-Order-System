@@ -1,11 +1,11 @@
 from flask import Flask, render_template, session, request, jsonify, redirect, url_for
-from db import get_db_connection
-from users import register_user_routes
-from inventory import register_inventory_routes
-from dashboard import register_dashboard_routes
-from auditlogs import register_auditLogs_routes  # Import the audit logs routes
-from accountType import register_accountType_routes 
-from companies import register_companies_routes 
+from routes.db import get_db_connection
+from routes.users import register_user_routes
+from routes.inventory import register_inventory_routes
+from routes.dashboard import register_dashboard_routes
+from routes.auditlogs import register_auditLogs_routes  # Import the audit logs routes
+from routes.accountType import register_accountType_routes 
+from routes.companies import register_companies_routes 
 
 app = Flask(__name__, template_folder='pages')
 app.secret_key = 'your_strong_random_secret_key_here'

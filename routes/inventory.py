@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify, session, redirect, url_for
-from db import get_db_connection
+from routes.db import get_db_connection
 
 
 def register_inventory_routes(app):
