@@ -56,12 +56,6 @@
                             <input type="text" id="accountTypeEdit" name="codeId" class="form-control" placeholder="Code ID" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
                       </div>
-                      <div class="input-group mb-3">
-                        <span style="font-weight: 700;" class="">Status:</span>
-                        <div class="input-group">
-                        <input type="text" id="statusEdit" name="description" class="form-control" placeholder="Status" aria-label="Username" aria-describedby="basic-addon1">
-                        </div>
-                      </div>
                     <div class="d-flex justify-content-end w-100">
                         <button type="button" class="btn btn-success" id="saveEditAccountType">Save</button>
                     </div>
@@ -70,37 +64,6 @@
     </div>
 </div>
 
-<!-- Modal edit quantity -->
-<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="modalEditQuantity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="modalEdit">Edit Item</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <h5 id="error-message-edit-quantity" style="display: none">
-                  Please fill up correctly. make sure the Quantity is a number.
-                </h5>
-                    <div class="input-group mb-3">
-                      <span style="font-weight: 700;" class="">Description:</span>
-                      <div class="input-group">
-                      <input disabled type="text" id="descriptionEditQuantity" name="description" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                    </div>
-                    <div class="input-group mb-3">
-                      <span style="font-weight: 700;" class="">Quantity:</span>
-                      <div class="input-group">
-                      <input type="text" id="quantityEditQuantity" name="quantity" class="form-control" placeholder="Quantity" aria-label="Username" aria-describedby="basic-addon1">
-                  </div>
-                    </div>
-                  <div class="d-flex justify-content-end w-100">
-                      <button type="button" class="btn btn-success" id="saveEditInventoryQuantity">Save</button>
-                  </div>
-          </div>                    
-      </div>
-  </div>
-</div>
 
 {% if logs %}
             <table class="table mt-3">
@@ -115,8 +78,7 @@
     {% for log in logs %}
     <tr data-id="{{ log[0] }}" 
     data-codeid="{{ log[1] }}"
-    data-description="{{ log[2] }}"
-    data-location="{{ log[3] }}">
+    data-description="{{ log[2] }}">
     <td>
         <div>
             <!-- <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalEditQuantity" id="editQuantity">
@@ -159,84 +121,84 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
-  $(document).on("click", "#editQuantity", function () {
-    // Get the row that was clicked
-    var row = $(this).closest("tr");
+//   $(document).on("click", "#editQuantity", function () {
+//     // Get the row that was clicked
+//     var row = $(this).closest("tr");
 
-    // Extract the data from the row
-    var description = row.data("description");
-    var quantity = row.data("quantity");
-    var id = row.data("id");  // This is the unique id for the inventory item
+//     // Extract the data from the row
+//     var description = row.data("description");
+//     var quantity = row.data("quantity");
+//     var id = row.data("id");  // This is the unique id for the inventory item
 
-    // Populate the modal with the extracted data
-    $("#modalEditQuantity #descriptionEditQuantity").val(description);
-    $("#modalEditQuantity #quantityEditQuantity").val(quantity);
+//     // Populate the modal with the extracted data
+//     $("#modalEditQuantity #descriptionEditQuantity").val(description);
+//     $("#modalEditQuantity #quantityEditQuantity").val(quantity);
 
-    // Store the id (unique identifier) of the inventory item in the modal for later use
-    $("#modalEditQuantity").data("itemId", id);
-});
+//     // Store the id (unique identifier) of the inventory item in the modal for later use
+//     $("#modalEditQuantity").data("itemId", id);
+// });
 
 
     //for edit quantity item
-    $(document).on("click", "#saveEditInventoryQuantity", function (event) {
-      var description = $.trim($("#descriptionEditQuantity").val()); // No need for encodeURI unless you're sending data 
-      var quantity = $.trim($("#quantityEditQuantity").val());
-      var itemId = $("#modalEditQuantity").data("itemId");
-       console.log("description:", description);
-       console.log("quantity:", quantity);
-       console.log("itemId:", itemId);
+    // $(document).on("click", "#saveEditInventoryQuantity", function (event) {
+    //   var description = $.trim($("#descriptionEditQuantity").val()); // No need for encodeURI unless you're sending data 
+    //   var quantity = $.trim($("#quantityEditQuantity").val());
+    //   var itemId = $("#modalEditQuantity").data("itemId");
+    //    console.log("description:", description);
+    //    console.log("quantity:", quantity);
+    //    console.log("itemId:", itemId);
        
   
-      var isOk = 0;
-      if (description == "") {
-        isOk++;
-        console.log(isOk);
-      }
-        // Regular expression to check if the value is not a number
-        const regex = /^(?!\d+$).*/;
+    //   var isOk = 0;
+    //   if (description == "") {
+    //     isOk++;
+    //     console.log(isOk);
+    //   }
+    //     // Regular expression to check if the value is not a number
+    //     const regex = /^(?!\d+$).*/;
 
-        if (quantity === "" || regex.test(quantity)) {
-        isOk++;
-        console.log(isOk);
-        }
+    //     if (quantity === "" || regex.test(quantity)) {
+    //     isOk++;
+    //     console.log(isOk);
+    //     }
   
-       if (isOk > 0) {
-         $("#error-message-edit-quantity").css({
-           display: "block", // Show the element
-           color: "red", // Change the text color to red
-         });
-         isOk=0;
-         setTimeout(function () {
-           $("#error-message-edit-quantity").css({
-             display: "none", // Show the element
-             color: "red", 
-           });
-         }, 4000);
-       } 
-        else {
-          $.ajax({
-            url: "{{url_for('inventoryEditQuantity')}}",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ 
-                id:itemId,
-                description: description,
-                quantity:quantity
+    //    if (isOk > 0) {
+    //      $("#error-message-edit-quantity").css({
+    //        display: "block", // Show the element
+    //        color: "red", // Change the text color to red
+    //      });
+    //      isOk=0;
+    //      setTimeout(function () {
+    //        $("#error-message-edit-quantity").css({
+    //          display: "none", // Show the element
+    //          color: "red", 
+    //        });
+    //      }, 4000);
+    //    } 
+    //     else {
+    //       $.ajax({
+    //         url: "{{url_for('inventoryEditQuantity')}}",
+    //         type: "POST",
+    //         contentType: "application/json",
+    //         data: JSON.stringify({ 
+    //             id:itemId,
+    //             description: description,
+    //             quantity:quantity
 
-            }),
-            success: function (response) {
-             setTimeout(function () {
-           location.reload();
-         }, 500);
-         console.log(response);
-              console.log(response);
-            },
-            error: function (error) {
-              console.log(error);
-            },
-          });
-        }
-    });
+    //         }),
+    //         success: function (response) {
+    //          setTimeout(function () {
+    //        location.reload();
+    //      }, 500);
+    //      console.log(response);
+    //           console.log(response);
+    //         },
+    //         error: function (error) {
+    //           console.log(error);
+    //         },
+    //       });
+    //     }
+    // });
 
 
 
@@ -273,14 +235,12 @@ $(document).on("click", ".edit-btn", function () {
     // Extract the data from the row
     var codeId = row.data("codeid");
     var description = row.data("description");
-    var location = row.data("location");
-    var price = row.data("price");
-    var quantity = row.data("quantity");
-    var id = row.data("id");  // This is the unique id for the inventory item
-
+    var id = row.data("id");
+    console.log(id)
+    console.log(description)
+    console.log(codeId)
     // Populate the modal with the extracted data
-    $("#modalEdit #codeIdEdit").val(codeId);
-    $("#modalEdit #descriptionEdit").val(description);
+    $("#modalEdit #accountTypeEdit").val(codeId);
 
     // Store the id (unique identifier) of the inventory item in the modal for later use
     $("#modalEdit").data("itemId", id);
