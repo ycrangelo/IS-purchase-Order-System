@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Inventory{% endblock %}</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/static/img/texwipe.png" type="image/icon type">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -37,32 +37,57 @@
         .sidebar a:hover {
             background-color: #495057;
         }
-        .sidebar #menudo {
-            background-color: #495057;
-        }
         .main-content {
             margin-left: 200px;
             padding: 20px;
             flex: 1;
         }
+        #menudo{
+            background-color: #495057;
+        }
+
+        /* Hide sidebar by default on tablets */
+        @media (max-width: 992px) {
+            .sidebar {
+                display: none;
+                position: absolute;
+                width: 250px;
+                height: 100vh;
+                z-index: 1000;
+                box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
+
     {% if show_sidebar %}
-    <div class="sidebar">
+    <!-- Navbar for tablets and smaller screens -->
+    <nav class="navbar navbar-dark bg-dark d-lg-none">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" id="menu-toggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
        <div>
             <a href="{{ url_for('dashboard') }}">Dashboard</a>
             <a href="{{ url_for('inventory') }}">Inventory</a>
             <a href="{{ url_for('users') }}">Users</a>
-            
             <a href="{{ url_for('auditlogs') }}">Audit Logs</a>
-            <!-- Users Dropdown -->
+            
+            <!-- Settings Dropdown -->
             <div class="dropdown">
-                <a class="dropdown-toggle" href="#" id="usersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="dropdown-toggle" href="#" id="usersDropdown" role="button">
                     Settings
                 </a>
-                <ul class="dropdown-menu" id="menudo" aria-labelledby="usersDropdown">
+                <ul class="dropdown-menu" id="menudo">
                     <li><a class="dropdown-item" href="{{ url_for('accountType') }}">Account Type</a></li>
                     <li><a class="dropdown-item" href="{{ url_for('companies') }}">Companies</a></li>
                 </ul>
@@ -83,14 +108,52 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Include the full version of jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function() {
+            function isTablet() {
+                return $(window).width() <= 992; // Detects if the screen is tablet-sized
+            }
+    
+            // Toggle sidebar on menu button click
+            $("#menu-toggle").click(function(event) {
+                event.stopPropagation(); // Prevent the event from closing the sidebar immediately
+                $("#sidebar").toggle();
+            });
+    
+            // Hide sidebar when clicking outside (only on tablets)
+            $(document).click(function(event) {
+                if (isTablet() && !$(event.target).closest("#sidebar, #menu-toggle").length) {
+                    $("#sidebar").hide();
+                }
+            });
+    
+            // Ensure sidebar stays open on desktops
+            $(window).resize(function() {
+                if (!isTablet()) {
+                    $("#sidebar").show(); // Keep sidebar open on larger screens
+                }
+            });
+    
+            // Fix Bootstrap dropdown inside sidebar
+            $("#usersDropdown").click(function(event) {
+                event.preventDefault();
+                event.stopPropagation(); // Prevent dropdown from closing immediately
+                $("#menudo").toggleClass("show"); // Toggle dropdown visibility
+            });
+    
+            // Close dropdown when clicking outside of it
+            $(document).click(function(event) {
+                if (!$(event.target).closest(".dropdown").length) {
+                    $("#menudo").removeClass("show");
+                }
+            });
+        });
+    </script>    
 
-<!-- Bootstrap JS (including Popper.js) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
