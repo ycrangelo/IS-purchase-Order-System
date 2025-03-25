@@ -35,7 +35,7 @@ def register_purchase_order_routes(app):
                 # Format the date and time for each log entry
         formatted_code_id = []
         for log in code_id:
-         formatted_code_id = [(log[0]) for log in code_id]
+         formatted_code_id.append((log[0]))
         # Close cursor and database connection
         my_cursor.close()
         mydb.close()
