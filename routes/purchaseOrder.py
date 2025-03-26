@@ -23,7 +23,7 @@ def register_purchase_order_routes(app):
             # log_date = log[3].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
             # log_time = log[3].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
             
-            formatted_logs.append((log[0], log[1], log[2],log[3],log[4],log[5],log[6]))
+            formatted_logs.append((log[0], log[1], log[2],log[3],log[4],log[5],log[6],log[7]))
 
         # Close cursor and database connection
         # Fetch code_id and price from inventory
@@ -52,6 +52,8 @@ def register_purchase_order_routes(app):
             description = data.get('description')
             quantity = int(data.get('quantity', 0))  # Convert to int
             code_id = data.get('code_id')
+            leftItemQuantity =int(data.get('leftItemQuantity', 0))
+            print("ito yung code id",code_id)
             totalPrice = float(data.get('totalPrice', 0))  # Convert to float
 
             # Ensure data is valid before proceeding with the insert
@@ -74,8 +76,8 @@ def register_purchase_order_routes(app):
 
             # Insert into purchase order
             my_cursor.execute(
-                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price) VALUES (%s, %s, %s, %s, %s)", 
-                (code_id, description, pricePerUnit, quantity, totalPrice)
+                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price,itemQuantity) VALUES (%s, %s, %s, %s, %s, %s)", 
+                (code_id, description, pricePerUnit, quantity, totalPrice,leftItemQuantity)
             )
 
             # Insert audit log

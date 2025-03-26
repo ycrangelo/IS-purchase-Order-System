@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<!-- Modal edit -->
+<!-- Modal edit purchase -->
 <div
   class="modal fade"
   data-bs-backdrop="static"
@@ -71,7 +71,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalEdit">Change Password</h5>
+        <h5 class="modal-title" id="modalEdit">Edit Purchase Order</h5>
         <button
           type="button"
           class="btn-close"
@@ -83,32 +83,105 @@
         <h5 id="error-message-password" style="display: none">
           Please fill up correctly.
         </h5>
+        <label id="error-message-password" class="fw-bold">
+          Item Id:
+        </label>
+        <div class="dropdown">
+          <button
+            class="btn btn-secondary dropdown-toggle mb-2"
+            type="button"
+            id="accountTypeButtonEdit"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Code ID
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="accountTypeButton" style="max-height: 200px; overflow-y: auto;">
+            {% for code, data in code_id.items() %}
+            <li>
+              <a class="dropdown-item" href="#" onclick="updateButtonTextEdit('{{ code }}', '{{ data.price }}', '{{ data.quantity }}')">
+                {{ code }}
+              </a>
+            </li>
+            {% else %}
+            <li>
+              <a class="dropdown-item" href="#" onclick="updateButtonTextEdit('No account types found', '')">
+                No account types found
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
         <div class="input-group mb-3">
-          <span style="font-weight: 700"> Old Password:</span>
+          <span style="font-weight: 700">Item Quantity:</span>
           <div class="input-group">
             <input
               type="text"
-              id="passwordEdit"
+              id="editItemQuantity"
+              name="quantity"
+              class="form-control"
+              placeholder="Item Quantity"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700">Price Per Unit:</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="editPricePerUnit"
               name="quantity"
               class="form-control"
               placeholder="Password"
               aria-label="Username"
               aria-describedby="basic-addon1"
-              disabled  
+              disabled
             />
           </div>
         </div>
         <div class="input-group mb-3">
-          <span style="font-weight: 700"> New Password:</span>
+          <span style="font-weight: 700">Description:</span>
           <div class="input-group">
             <input
               type="text"
-              id="passwordEditNew"
+              id="editDescription"
               name="quantity"
               class="form-control"
               placeholder="Password"
               aria-label="Username"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700">Quantity</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="passwordEditNew"
+              name="editQuantity"
+              class="form-control"
+              placeholder="Quantity"
+              aria-label="Username"
               aria-describedby="basic-addon1"  
+            />
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <span style="font-weight: 700">Total Price</span>
+          <div class="input-group">
+            <input
+              type="text"
+              id="EditTotalPrice"
+              name="quantity"
+              class="form-control"
+              placeholder="Total Price"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              disabled
             />
           </div>
         </div>
@@ -291,22 +364,34 @@
         {% for log in logs %}
         <tr
           data-id="{{ log[0] }}"
-          data-fullname="{{ log[2] }}"
-          data-password="{{ log[5] }}"
+          data-code-id="{{ log[1] }}"
+          data-Description="{{ log[2] }}"
+          data-price-per-unit="{{ log[6] }}"
+          data-quantity="{{ log[4] }}"
+          data-total-price="{{ log[3] }}"
+          data-left-item-quantity="{{ log[7] }}"
         >
           <td>
             <div>
               <button
                 type="button"
-                class="btn btn-primary edit-btn"
+                class="btn btn-warning edit-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#modalChangePassword"
               >
-                <i class="bi bi-person-fill-lock"></i>
+              <i class="bi bi-pencil-square"></i>
               </button>
-              <button type="button" class="btn btn-danger" id="deactivation">
+              <!-- <button
+              type="button"
+              class="btn btn-primary ViewPurchaseOrder"
+              data-bs-toggle="modal"
+              data-bs-target="#modalChangePassword"
+            >
+            <i class="bi bi-eye-fill"></i>
+            </button> -->
+              <!-- <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
-              </button>
+              </button> -->
             </div>
           </td>
           <td>{{ log[1] }}</td>
@@ -358,6 +443,33 @@
   }
 
   function calculateTotalPrice() {
+    let price = parseFloat(document.getElementById("pricePerUnit").value) || 0;
+    let quantity = parseFloat(document.getElementById("quantity").value) || 0;
+    let totalPrice = price * quantity;
+
+    document.getElementById("totalPrice").value = totalPrice.toFixed(2); // Ensures two decimal places
+  }
+
+  // Attach event listener to Quantity field
+  document.getElementById("quantity").addEventListener("input", calculateTotalPrice);
+</script>
+
+<!-- JavaScript to update button text -->
+<script>
+  var editedquantity;
+  function updateButtonTextEdit(selectedCode, selectedPrice,itemQuantity) {
+    // Update the button text with the selected Code ID
+    document.getElementById("accountTypeButtonEdit").innerText = selectedCode;
+
+    // Update the disabled Price per Unit input
+    document.getElementById("editPricePerUnit").value = selectedPrice;
+    document.getElementById("editItemQuantity").value = itemQuantity;
+
+    // Trigger total price calculation if quantity is already entered
+    calculateTotalPriceEdit();
+  }
+
+  function calculateTotalPriceEdit() {
     let price = parseFloat(document.getElementById("pricePerUnit").value) || 0;
     let quantity = parseFloat(document.getElementById("quantity").value) || 0;
     let totalPrice = price * quantity;
@@ -614,10 +726,14 @@ $(document).ready(function() {
 
   $(document).on("click", ".edit-btn", function () {
     var row = $(this).closest("tr");
-    var fullname = row.data("fullname");
-    var password = row.data("password");
+    var code_id = row.data("code-id");
+    var pricePerUnit = row.data("price-per-unit");
+    var leftItemQuantity = row.data("left-item-quantity");
     var id = row.data("id");
-
+    editItemQuantity
+    document.getElementById("accountTypeButtonEdit").innerText = code_id;
+    document.getElementById("editPricePerUnit").value = pricePerUnit;
+    document.getElementById("editItemQuantity").value = leftItemQuantity;
     $("#modalChangePassword #passwordEdit").val(password);
     $("#modalChangePassword").data("itemId", id);
   });
@@ -655,7 +771,7 @@ $(document).ready(function() {
     var accountTypeButton = $.trim($("#accountTypeButton").text());
     var totalPrice = $.trim($("#totalPrice").val());
     var itemQuantity = $.trim($("#itemQuantity").val());
-
+    var leftItemQuantity = Number(itemQuantity) - Number(quantity)
 
     console.log(pricePerUnit)
     console.log(description)
@@ -714,7 +830,8 @@ $(document).ready(function() {
           description: description,
           quantity: quantity,
           code_id: accountTypeButton,
-          totalPrice:totalPrice
+          totalPrice:totalPrice,
+          leftItemQuantity:leftItemQuantity
         }),
         success: function (response) {
           setTimeout(function () {
