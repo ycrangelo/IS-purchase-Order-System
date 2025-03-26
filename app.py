@@ -24,10 +24,10 @@ register_purchase_order_routes(app)
 @app.route('/')
 def home():
     
-                # Check if 'username' exists in the session
-    if 'username' in session or len(session['username'])!=0:
-        # If not logged in, redirect to the login page
-        return redirect(url_for('dashboard'))
+    #             # Check if 'username' exists in the session
+    # if 'username' in session or len(session['username'])!=0:
+    #     # If not logged in, redirect to the login page
+    #     return redirect(url_for('dashboard'))
     return render_template('login.html', show_sidebar=False)
 
 # Login route
@@ -41,16 +41,21 @@ def login():
     mydb = get_db_connection()
     my_cursor = mydb.cursor()
     my_cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+    
     user = my_cursor.fetchone()
-
-    if user:
+    status= user[4]
+    print("ito yung status",status)
+    isActive =True
+    if int(status) == 0:
+        isActive = False
+    if isActive:
         session['username'] = user[3]
         session['password'] = password
         my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", (session['username'], "log in"))
         mydb.commit()
         return redirect(url_for('dashboard'))
     else:
-        return render_template('login.html', error="Invalid username or password.")
+        return render_template('login.html', error="Invalid Credentials or Deactive Account")
 
 # Logout route
 @app.route('/logout')

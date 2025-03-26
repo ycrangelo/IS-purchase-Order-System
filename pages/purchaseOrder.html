@@ -280,10 +280,11 @@
       <thead>
         <tr>
           <th></th>
-          <th>Username</th>
-          <th>Fullname</th>
-          <th>Status</th>
-          <th>Account type</th>
+          <th>Item Code</th>
+          <th>Description</th>
+          <th>Price Per Unit</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>
@@ -310,14 +311,9 @@
           </td>
           <td>{{ log[1] }}</td>
           <td>{{ log[2] }}</td>
-          <td>
-            {% if log[3]|int ==0 %}
-            <p style="color: red">Deactivate</p>
-            {% else %}
-            <p style="color: green">Active</p>
-            {% endif %}
-          </td>
+          <td>{{ log[6] }}</td>
           <td>{{ log[4] }}</td>
+          <td>{{ log[3] }}</td>
         </tr>
         {% endfor %}
       </tbody>
