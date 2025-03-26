@@ -154,38 +154,56 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Account type
+            Code ID
           </button>
-          <ul
-            class="dropdown-menu"
-            aria-labelledby="accountTypeButton"
-            style="max-height: 200px; overflow-y: auto;"
-          >
-          <!-- dito mo lagay yung text box sa loob ng dropdown luds -->
-            {% for log in code_id %}
+          <ul class="dropdown-menu" aria-labelledby="accountTypeButton" style="max-height: 200px; overflow-y: auto;">
+            {% for code, data in code_id.items() %}
             <li>
-              <a
-                class="dropdown-item"
-                href="#"
-                onclick="updateButtonText('{{ log }}')"
-                >{{ log }}</a
-              >
+              <a class="dropdown-item" href="#" onclick="updateButtonText('{{ code }}', '{{ data.price }}', '{{ data.quantity }}')">
+                {{ code }}
+              </a>
             </li>
             {% else %}
             <li>
-              <a
-                class="dropdown-item"
-                href="#"
-                onclick="updateButtonText('No account types found')"
-                >No account types found</a
-              >
+              <a class="dropdown-item" href="#" onclick="updateButtonText('No account types found', '')">
+                No account types found
+              </a>
             </li>
             {% endfor %}
           </ul>
         </div>
+        
+        <!-- Input for Price/Unit -->
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Item Quantity</label>
+          <input
+            type="text"
+            id="itemQuantity"
+            name="itemQuantity"
+            class="form-control"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Price per Unit</label>
+          <input
+            type="text"
+            id="pricePerUnit"
+            name="pricePerUnit"
+            class="form-control"
+            placeholder="Price Per Unit"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
+        
 
-        <div class="input-group mb-3 mt-3 d-flex flex-row align-items-center gap-2">
-          <label class="fw-bold" for="">Description</label>
+        <div class=" mb-3 gap-2">
+          <label class="fw-bold mb-1" for="">Description</label>
           <input
             type="text"
             id="description"
@@ -196,21 +214,8 @@
             aria-describedby="basic-addon1"
           />
         </div>
-        <div class="input-group mb-3 d-flex flex-row align-items-center gap-2">
-          <label class="fw-bold" for="">Price/Unit</label>
-          <input
-            type="text"
-            id="pricePerUnit"
-            name="pricePerUnit"
-            class="form-control"
-            placeholder="Price Per Unit"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-            disabled
-          />
-        </div>
-        <div class="input-group mb-3 d-flex flex-row align-items-center gap-2">
-          <label class="fw-bold" for="">Quantity</label>
+        <div class=" mb-3 gap-2">
+          <label class="fw-bold mb-1" for="">Quantity</label>
           <input
             type="text"
             id="quantity"
@@ -221,8 +226,21 @@
             aria-describedby="basic-addon1"
           />
         </div>
+        <div class=" mb-3 gap-2">
+          <label class="fw-bold mb-1" for="">Total Price</label>
+          <input
+            type="text"
+            id="totalPrice"
+            name="totalPrice"
+            class="form-control"
+            placeholder="Total Price"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
         <div class="d-flex justify-content-end w-100">
-          <button type="button" class="btn btn-success" id="saveAccount">
+          <button type="button" class="btn btn-success" id="savePurchaseOrder">
             Save
           </button>
         </div>
@@ -331,12 +349,31 @@
 
 <!-- JavaScript to update button text -->
 <script>
-  function updateButtonText(selectedText) {
-    // Update the button text with the selected item
-    document.getElementById("accountTypeButton").innerText = selectedText;
-    document.getElementById("pricePerUnit").innerText = selectedText;
+  function updateButtonText(selectedCode, selectedPrice,itemQuantity) {
+    // Update the button text with the selected Code ID
+    document.getElementById("accountTypeButton").innerText = selectedCode;
+
+    // Update the disabled Price per Unit input
+    document.getElementById("pricePerUnit").value = selectedPrice;
+    document.getElementById("itemQuantity").value = itemQuantity;
+
+    // Trigger total price calculation if quantity is already entered
+    calculateTotalPrice();
   }
+
+  function calculateTotalPrice() {
+    let price = parseFloat(document.getElementById("pricePerUnit").value) || 0;
+    let quantity = parseFloat(document.getElementById("quantity").value) || 0;
+    let totalPrice = price * quantity;
+
+    document.getElementById("totalPrice").value = totalPrice.toFixed(2); // Ensures two decimal places
+  }
+
+  // Attach event listener to Quantity field
+  document.getElementById("quantity").addEventListener("input", calculateTotalPrice);
 </script>
+
+
 
 <!-- JavaScript for AJAX, pagination, and search functionality -->
 <script type="text/javascript">
@@ -615,28 +652,47 @@ $(document).ready(function() {
     });
   });
 
-  $(document).on("click", "#saveAccount", function (event) {
-    var fullname = $.trim($("#fullname").val());
-    var password = $.trim($("#password").val());
-    var Username = $.trim($("#username").val());
+  $(document).on("click", "#savePurchaseOrder", function (event) {
+    var pricePerUnit = $.trim($("#pricePerUnit").val());
+    var description = $.trim($("#description").val());
+    var quantity = $.trim($("#quantity").val());
     var accountTypeButton = $.trim($("#accountTypeButton").text());
+    var totalPrice = $.trim($("#totalPrice").val());
+    var itemQuantity = $.trim($("#itemQuantity").val());
 
+
+    console.log(pricePerUnit)
+    console.log(description)
+    console.log(quantity)
+    console.log(accountTypeButton)
+    console.log(totalPrice)
     var isOk = 0;
-    if (accountTypeButton == "Account type") {
-      isOk = 1;
-      console.log(isOk);
-    }
-    if (Username == "") {
+    // Regular expression to check if the value is not a number
+    if (accountTypeButton == "Code ID") {
+      console.log('INSIDEaccountTypeButton')
       isOk++;
       console.log(isOk);
     }
-    if (fullname == "") {
+    if (pricePerUnit == "") {
+      console.log('INSIDE pricePerUnit')
       isOk++;
       console.log(isOk);
     }
-    if (password == "") {
+      if (Number(itemQuantity) < Number(quantity)) {
+    console.log('INSIDE CHECK QUAN malaki');
+    isOk++;
+    console.log(isOk);
+  }
+    if (description == "") {
+      console.log('INSIDEdescription')
       isOk++;
       console.log(isOk);
+    }
+    const regex = /^\d+$/; // Only allows numbers
+    if (!regex.test(quantity)) { 
+      console.log('regex')
+      isOk++; 
+      console.log(isOk); 
     }
 
     if (isOk > 0) {
@@ -651,16 +707,18 @@ $(document).ready(function() {
           color: "red",
         });
       }, 4000);
-    } else {
+    } 
+    else {
       $.ajax({
-        url: "{{url_for('createAccount')}}",
+        url: "{{url_for('createPurchaseOrder')}}",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({
-          fullname: fullname,
-          password: password,
-          Username: Username,
-          accountTypeButton: accountTypeButton,
+          pricePerUnit: pricePerUnit,
+          description: description,
+          quantity: quantity,
+          code_id: accountTypeButton,
+          totalPrice:totalPrice
         }),
         success: function (response) {
           setTimeout(function () {

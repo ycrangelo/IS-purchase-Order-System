@@ -30,14 +30,81 @@ def register_purchase_order_routes(app):
         mydb = get_db_connection()
         my_cursor = mydb.cursor()
 
-        my_cursor.execute("SELECT code_id,price FROM inventory ORDER BY created_at DESC")
-        code_id = my_cursor.fetchall()  # Fetch all rows
-                # Format the date and time for each log entry
-        formatted_code_id = []
-        for log in code_id:
-         formatted_code_id.append((log[0]))
+        # Fetch code_id and price from inventory
+        my_cursor.execute("SELECT code_id, price,quantity FROM inventory ORDER BY created_at DESC")
+        code_data = my_cursor.fetchall()  # Fetch all rows
+
+        # Format the data into a dictionary
+        formatted_code_id = {log[0]: {"price": log[1], "quantity": log[2]} for log in code_data}
+
         # Close cursor and database connection
         my_cursor.close()
         mydb.close()
+
+        # Pass the formatted dictionary to the template
+        return render_template('purchaseOrder.html', code_id=formatted_code_id, show_sidebar=True)
+    
+    @app.route('/purchaseOrder/create', methods=['GET', 'POST'])
+    def createPurchaseOrder():
+        mydb = get_db_connection()
+        my_cursor = mydb.cursor()
         
-        return render_template('purchaseOrder.html',code_id=formatted_code_id, show_sidebar=True)
+        try:
+            # Get the JSON data from the request body
+            data = request.get_json()
+            pricePerUnit = float(data.get('pricePerUnit', 0))  # Convert to float
+            description = data.get('description')
+            quantity = int(data.get('quantity', 0))  # Convert to int
+            code_id = data.get('code_id')
+            totalPrice = float(data.get('totalPrice', 0))  # Convert to float
+
+            # Ensure data is valid before proceeding with the insert
+            if not (pricePerUnit and description and quantity and code_id):
+                return jsonify({"error": "Missing required fields!"}), 400
+
+            # Fetch current inventory quantity
+            my_cursor.execute("SELECT quantity FROM inventory WHERE code_id = %s", (code_id,))
+            logs = my_cursor.fetchone()
+
+            if logs is None:
+                return jsonify({"error": "Item not found in inventory!"}), 404
+            
+            quantinv = logs[0]  # Extract quantity from the tuple
+
+            # Ensure inventory has enough stock
+            
+            invQuantity = int(quantinv) - quantity
+            print("Updated Inventory Quantity:", invQuantity)
+
+            # Insert into purchase order
+            my_cursor.execute(
+                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price) VALUES (%s, %s, %s, %s, %s)", 
+                (code_id, description, pricePerUnit, quantity, totalPrice)
+            )
+
+            # Insert audit log
+            my_cursor.execute(
+                "INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                (session['username'], f"Purchase Order: {description} With Item Code: {code_id}")
+            )
+
+            # Update inventory quantity
+            my_cursor.execute(
+                "UPDATE inventory SET quantity = %s WHERE code_id = %s",
+                (invQuantity, code_id)
+            )
+
+            mydb.commit()
+            return jsonify({"message": "Purchase Order created successfully!"}), 200
+
+        except ValueError as ve:
+            print(f"ValueError: {ve}")
+            return jsonify({"error": "Invalid data type!"}), 400
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({"error": str(e)}), 500
+
+        finally:
+            my_cursor.close()
+            mydb.close()
