@@ -186,7 +186,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-end w-100">
-          <button type="button" class="btn btn-success" id="savechangePass">
+          <button type="button" class="btn btn-success" id="saveEditPurchaseOrder">
             Save
           </button>
         </div>
@@ -677,51 +677,50 @@ $(document).ready(function() {
 });
 
 
-  $(document).on("click", "#savechangePass", function (event) {
+  $(document).on("click", "#saveEditPurchaseOrder", function (event) {
     var passwordEditNew = $.trim($("#passwordEditNew").val());
-    var itemId = $("#modalChangePassword").data("itemId");
-
-    console.log("itemId:", itemId);
+    var itemId = $("#modalChangePassword").attr("data-itemId");
+    console.log(itemId);
     console.log("passwordEditNew:", passwordEditNew);
 
-    var isOk = 0;
-    if (passwordEditNew == "") {
-      isOk++;
-      console.log(isOk);
-    }
+    // var isOk = 0;
+    // if (passwordEditNew == "") {
+    //   isOk++;
+    //   console.log(isOk);
+    // }
 
-    if (isOk > 0) {
-      $("#error-message-password").css({
-        display: "block",
-        color: "red",
-      });
-      isOk = 0;
-      setTimeout(function () {
-        $("#error-message-password").css({
-          display: "none",
-          color: "red",
-        });
-      }, 4000);
-    } else {
-      $.ajax({
-        url: "{{url_for('change_password')}}",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: itemId,
-          newPassword: passwordEditNew,
-        }),
-        success: function (response) {
-          setTimeout(function () {
-            location.reload();
-          }, 500);
-          console.log(response);
-        },
-        error: function (error) {
-          console.log(error);
-        },
-      });
-    }
+    // if (isOk > 0) {
+    //   $("#error-message-password").css({
+    //     display: "block",
+    //     color: "red",
+    //   });
+    //   isOk = 0;
+    //   setTimeout(function () {
+    //     $("#error-message-password").css({
+    //       display: "none",
+    //       color: "red",
+    //     });
+    //   }, 4000);
+    // } else {
+    //   $.ajax({
+    //     url: "{{url_for('change_password')}}",
+    //     type: "POST",
+    //     contentType: "application/json",
+    //     data: JSON.stringify({
+    //       id: itemId,
+    //       newPassword: passwordEditNew,
+    //     }),
+    //     success: function (response) {
+    //       setTimeout(function () {
+    //         location.reload();
+    //       }, 500);
+    //       console.log(response);
+    //     },
+    //     error: function (error) {
+    //       console.log(error);
+    //     },
+    //   });
+    // }
   });
 
   $(document).on("click", ".edit-btn", function () {
@@ -734,35 +733,34 @@ $(document).ready(function() {
     document.getElementById("accountTypeButtonEdit").innerText = code_id;
     document.getElementById("editPricePerUnit").value = pricePerUnit;
     document.getElementById("editItemQuantity").value = leftItemQuantity;
-    $("#modalChangePassword #passwordEdit").val(password);
-    $("#modalChangePassword").data("itemId", id);
+    $("#modalChangePassword").attr("data-itemId", id);
   });
 
-  $(document).on("click", "#deactivation", function (event) {
-    var row = $(this).closest("tr");
-    var id = row.data("id");
-    var codeId = row.data("fullname");
-    console.log(codeId);
-    console.log(id);
-    $.ajax({
-      url: "{{url_for('userDeactivation')}}",
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({
-        id: id,
-        codeId: codeId,
-      }),
-      success: function (response) {
-        setTimeout(function () {
-          location.reload();
-        }, 500);
-        console.log(response);
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
-  });
+  // $(document).on("click", "#deactivation", function (event) {
+  //   var row = $(this).closest("tr");
+  //   var id = row.data("id");
+  //   var codeId = row.data("fullname");
+  //   console.log(codeId);
+  //   console.log(id);
+  //   $.ajax({
+  //     url: "{{url_for('userDeactivation')}}",
+  //     type: "POST",
+  //     contentType: "application/json",
+  //     data: JSON.stringify({
+  //       id: id,
+  //       codeId: codeId,
+  //     }),
+  //     success: function (response) {
+  //       setTimeout(function () {
+  //         location.reload();
+  //       }, 500);
+  //       console.log(response);
+  //     },
+  //     error: function (error) {
+  //       console.log(error);
+  //     },
+  //   });
+  // });
 
   $(document).on("click", "#savePurchaseOrder", function (event) {
     var pricePerUnit = $.trim($("#pricePerUnit").val());
