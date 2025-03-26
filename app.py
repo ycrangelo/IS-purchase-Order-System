@@ -23,11 +23,18 @@ register_purchase_order_routes(app)
 # Home route
 @app.route('/')
 def home():
+    
+                # Check if 'username' exists in the session
+    if 'username' in session or len(session['username'])!=0:
+        # If not logged in, redirect to the login page
+        return redirect(url_for('dashboard'))
     return render_template('login.html', show_sidebar=False)
 
 # Login route
 @app.route('/login', methods=['POST'])
 def login():
+    
+        
     username = request.form.get('name')
     password = request.form.get('password')
 
