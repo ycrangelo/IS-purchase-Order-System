@@ -685,25 +685,24 @@ $(document).ready(function() {
     var EditTotalPrice = $.trim($("#EditTotalPrice").val());
     var accountTypeButton = $.trim($("#accountTypeButtonEdit").text());
     var id = $("#modalChangePassword").attr("data-itemId");
-    console.log(id);
-    console.log(accountTypeButton);
-    console.log("editItemQuantity:", editItemQuantity);
-    console.log("editPricePerUnit:", editPricePerUnit);
-    console.log("editDescription:", editDescription);
-    console.log("editQuantity:", editQuantity);
-    console.log("EditTotalPrice:", EditTotalPrice);
-    editItemQuantity
+    // console.log(id);
+    // console.log(accountTypeButton);
+    // console.log("editItemQuantity:", editItemQuantity);
+    // console.log("editPricePerUnit:", editPricePerUnit);
+    // console.log("editDescription:", editDescription);
+    // console.log("editQuantity:", editQuantity);
+    // console.log("EditTotalPrice:", EditTotalPrice);
     var isOk = 0;
+    var quant =0
     if (editDescription == "") {
       isOk++;
+      console.log("1");
       console.log(isOk);
     }
     if (editItemQuantity == 0) {
+      quant++;
       isOk++;
-  $("#error-message-password-edit").css({
-    display: "block",
-    color: "red",
-  }).text("Low Item quantity"); // Add the text message here
+      console.log("2");
   console.log(isOk);
 }
     const regex = /^\d+$/; // Only allows numbers
@@ -718,6 +717,12 @@ $(document).ready(function() {
     display: "block",
     color: "red",
   }).text("Please fill up correctly."); // Add the text message here
+  if(quant>0){
+        $("#error-message-password-edit").css({
+    display: "block",
+    color: "red",
+  }).text("Low Item quantity"); // Add the text message here
+      }
       isOk = 0;
       setTimeout(function () {
         $("#error-message-password-edit").css({
