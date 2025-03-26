@@ -692,12 +692,20 @@ $(document).ready(function() {
     console.log("editDescription:", editDescription);
     console.log("editQuantity:", editQuantity);
     console.log("EditTotalPrice:", EditTotalPrice);
-
+    editItemQuantity
     var isOk = 0;
     if (editDescription == "") {
       isOk++;
       console.log(isOk);
     }
+    if (editItemQuantity == 0) {
+      isOk++;
+  $("#error-message-password-edit").css({
+    display: "block",
+    color: "red",
+  }).text("Low Item quantity"); // Add the text message here
+  console.log(isOk);
+}
     const regex = /^\d+$/; // Only allows numbers
     if (!regex.test(editQuantity)) { 
       console.log('regex')
@@ -707,9 +715,9 @@ $(document).ready(function() {
 
     if (isOk > 0) {
       $("#error-message-password-edit").css({
-        display: "block",
-        color: "red",
-      });
+    display: "block",
+    color: "red",
+  }).text("Please fill up correctly."); // Add the text message here
       isOk = 0;
       setTimeout(function () {
         $("#error-message-password-edit").css({
@@ -799,8 +807,16 @@ $(document).ready(function() {
     console.log(accountTypeButton)
     console.log(totalPrice)
     var isOk = 0;
+    if (editItemQuantity == 0) {
+      isOk++;
+  $("#error-message").css({
+    display: "block",
+    color: "red",
+  }).text("Low Item quantity"); // Add the text message here
+  console.log(isOk);
+}
     // Regular expression to check if the value is not a number
-    if (accountTypeButton == "Code ID") {
+    if (accountTypeButton == "Code ID" || accountTypeButton == "No account types found" ) {
       console.log('INSIDEaccountTypeButton')
       isOk++;
       console.log(isOk);
@@ -831,7 +847,7 @@ $(document).ready(function() {
       $("#error-message").css({
         display: "block",
         color: "red",
-      });
+      }).text("Please fill up correctly."); // Add the text message here
       isOk = 0;
       setTimeout(function () {
         $("#error-message").css({

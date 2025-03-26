@@ -27,7 +27,7 @@ def register_purchase_order_routes(app):
 
         # Close cursor and database connection
         # Fetch code_id and price from inventory
-        my_cursor.execute("SELECT code_id, price,quantity FROM inventory ORDER BY created_at DESC")
+        my_cursor.execute("SELECT code_id, price,quantity FROM inventory WHERE status !=0 AND quantity != 0 ORDER BY created_at DESC")
         code_data = my_cursor.fetchall()  # Fetch all rows
 
         # Format the data into a dictionary
@@ -125,57 +125,115 @@ def register_purchase_order_routes(app):
             editDescription = data.get('editDescription')
             editQuantity = int(float(data.get('editQuantity', 0)))
             EditTotalPrice = float(data.get('EditTotalPrice', 0))
-            
-            # Get current values from purchase_order
-            my_cursor.execute("SELECT total_price, quantity FROM purchase_order WHERE id = %s", (id,))
+
+            # Fix 1: Add comma to make it a tuple
+            my_cursor.execute("SELECT item_code FROM purchase_order WHERE id = %s", (id,))
             logs = my_cursor.fetchone()
+
+            if logs is None:
+                return jsonify({"error": "Item not found in inventory!"}), 404
             
-            # Convert database values to appropriate types
-            total_price = float(logs[0]) if logs and logs[0] is not None else 0.0
-            quantity = int(logs[1]) if logs and logs[1] is not None else 0
+            purchaseOrderId = logs[0]  # Fixed typo in variable name
             
-            updatedQuan = editQuantity + quantity
-            updatedTotal_price = total_price + EditTotalPrice
+            print("this is the purchase order",purchaseOrderId)
+            print("this is the accountTypeButton",accountTypeButton)
             
-            # Update purchase_order
-            my_cursor.execute("""
-                UPDATE purchase_order
-                SET item_code = %s, Description = %s, itemQuantity = %s, 
-                    price_per_unit = %s, quantity = %s, total_price = %s 
-                WHERE id = %s
-            """, (accountTypeButton, editDescription, editItemQuantity, 
-                editPricePerUnit, editQuantity, updatedTotal_price, id))
-            
-            # Update inventory
-            my_cursor.execute("SELECT quantity FROM inventory WHERE code_id = %s", (accountTypeButton,))
-            logs = my_cursor.fetchone()
-            
-            if logs and logs[0] is not None:  # Check if result exists and is not None
-                invQuantity = int(float(logs[0]))  # Convert to int safely
-                updateQuantityInventory = invQuantity - editQuantity
+            if purchaseOrderId == accountTypeButton:
+                # Get current values from purchase_order
+                my_cursor.execute("SELECT total_price, quantity FROM purchase_order WHERE id = %s", (id,))
+                logs = my_cursor.fetchone()
                 
-                my_cursor.execute(
-                    "UPDATE inventory SET quantity = %s WHERE code_id = %s",
-                    (updateQuantityInventory, accountTypeButton)
-                )
+                # Convert database values to appropriate types
+                total_price = float(logs[0]) if logs and logs[0] is not None else 0.0
+                quantity = int(logs[1]) if logs and logs[1] is not None else 0
+                
+                updatedQuan = editQuantity + quantity
+                updatedTotal_price = total_price + EditTotalPrice
+                
+                # Update purchase_order
+                my_cursor.execute("""
+                    UPDATE purchase_order
+                    SET item_code = %s, Description = %s, itemQuantity = %s, 
+                        price_per_unit = %s, quantity = %s, total_price = %s 
+                    WHERE id = %s
+                """, (accountTypeButton, editDescription, editItemQuantity, 
+                    editPricePerUnit, editQuantity, updatedTotal_price, id))
+                
+                # Update inventory
+                my_cursor.execute("SELECT quantity FROM inventory WHERE code_id = %s", (accountTypeButton,))
+                logs = my_cursor.fetchone()
+                
+                if logs and logs[0] is not None:
+                    invQuantity = int(float(logs[0]))
+                    updateQuantityInventory = invQuantity - editQuantity
+                    
+                    my_cursor.execute(
+                        "UPDATE inventory SET quantity = %s WHERE code_id = %s",
+                        (updateQuantityInventory, accountTypeButton)
+                    )
 
-            # Log the update to the audit log
-            my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                            (session['username'], f"Edited an Purchase Order with Item Id: {accountTypeButton}, Description: {editDescription}"))
+                my_cursor.execute("""
+                    UPDATE purchase_order
+                    SET itemQuantity = %s WHERE item_code = %s""", 
+                    (updateQuantityInventory, accountTypeButton))
+                
+                # Log the update to the audit log
+                my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
+                                (session['username'], f"Edited a Purchase Order with Item Id: {accountTypeButton}, Description: {editDescription}"))
 
-            # Commit changes to the database
-            mydb.commit()
+                mydb.commit()
+                return jsonify({"message": "Inventory updated successfully!"}), 200
+            else:
+                # Initialize these variables for the else case
+                updatedTotal_price = EditTotalPrice
 
-            # Return a success response
-            return jsonify({"message": "Inventory updated successfully!"}), 200
-
+                my_cursor.execute("SELECT item_code,itemQuantity FROM purchase_order WHERE id = %s", (id,))
+                purchase_order_logs = my_cursor.fetchone()
+                item_code_logs=purchase_order_logs[0]
+                itemQuantity_logs=purchase_order_logs[1]
+                
+                my_cursor.execute("SELECT quantity FROM inventory WHERE code_id = %s", (item_code_logs,))
+                logs = my_cursor.fetchone()
+                
+                if logs and logs[0] is not None:
+                    invQuantity = int(float(logs[0]))
+                    updateQuantityInventory = invQuantity + itemQuantity_logs
+                    print("this is invQuantity",invQuantity)
+                    print("this is itemQuantity_logs",itemQuantity_logs)
+                    print("this is the total test 2",updateQuantityInventory)
+                    my_cursor.execute(
+                        "UPDATE inventory SET quantity = %s WHERE code_id = %s",
+                        (updateQuantityInventory, item_code_logs)
+                    )
+                    mydb.commit()
+                    
+                # Update purchase_order
+                my_cursor.execute("""
+                    UPDATE purchase_order
+                    SET item_code = %s, Description = %s, itemQuantity = %s, 
+                        price_per_unit = %s, quantity = %s, total_price = %s 
+                    WHERE id = %s
+                """, (accountTypeButton, editDescription, editItemQuantity, 
+                    editPricePerUnit, editQuantity, updatedTotal_price, id))
+                
+                # Update inventory
+                my_cursor.execute("SELECT quantity FROM inventory WHERE code_id = %s", (accountTypeButton,))
+                logs = my_cursor.fetchone()
+                
+                if logs and logs[0] is not None:
+                    invQuantity = int(float(logs[0]))
+                    updateQuantityInventory = invQuantity - editQuantity
+                    
+                    my_cursor.execute(
+                        "UPDATE inventory SET quantity = %s WHERE code_id = %s",
+                        (updateQuantityInventory, accountTypeButton)
+                    )
+                    mydb.commit()
+                return jsonify({"message": "Inventory updated successfully!"}), 200
         except Exception as e:
-            # Capture the exact error for logging and return it in the response
             mydb.rollback()
-            print(f"Error occurred: {e}")  # This will print to your console
+            print(f"Error occurred: {e}")
             return jsonify({"error": f"An error occurred while updating the inventory: {str(e)}"}), 500
-
         finally:
-            # Close the database connection
             my_cursor.close()
             mydb.close()
