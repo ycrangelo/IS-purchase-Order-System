@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<!-- Modal edit purchase -->
+<!-- Modal edit purchase 1212 -->
 <div
   class="modal fade"
   data-bs-backdrop="static"
@@ -80,10 +80,10 @@
         ></button>
       </div>
       <div class="modal-body">
-        <h5 id="error-message-password" style="display: none">
+        <h5 id="error-message-password-edit" style="display: none">
           Please fill up correctly.
         </h5>
-        <label id="error-message-password" class="fw-bold">
+        <label id="error-message-password-edit" class="fw-bold">
           Item Id:
         </label>
         <div class="dropdown">
@@ -150,7 +150,7 @@
               id="editDescription"
               name="quantity"
               class="form-control"
-              placeholder="Password"
+              placeholder="Description"
               aria-label="Username"
               aria-describedby="basic-addon1"
             />
@@ -161,7 +161,7 @@
           <div class="input-group">
             <input
               type="text"
-              id="passwordEditNew"
+              id="editQuantity"
               name="editQuantity"
               class="form-control"
               placeholder="Quantity"
@@ -208,7 +208,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create Account</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add Purchase Order</h5>
         <button
           type="button"
           class="btn-close"
@@ -470,15 +470,15 @@
   }
 
   function calculateTotalPriceEdit() {
-    let price = parseFloat(document.getElementById("pricePerUnit").value) || 0;
-    let quantity = parseFloat(document.getElementById("quantity").value) || 0;
+    let price = parseFloat(document.getElementById("editPricePerUnit").value) || 0;
+    let quantity = parseFloat(document.getElementById("editQuantity").value) || 0;
     let totalPrice = price * quantity;
 
-    document.getElementById("totalPrice").value = totalPrice.toFixed(2); // Ensures two decimal places
+    document.getElementById("EditTotalPrice").value = totalPrice.toFixed(2); // Ensures two decimal places
   }
 
   // Attach event listener to Quantity field
-  document.getElementById("quantity").addEventListener("input", calculateTotalPrice);
+  document.getElementById("editQuantity").addEventListener("input", calculateTotalPriceEdit);
 </script>
 
 
@@ -678,49 +678,71 @@ $(document).ready(function() {
 
 
   $(document).on("click", "#saveEditPurchaseOrder", function (event) {
-    var passwordEditNew = $.trim($("#passwordEditNew").val());
-    var itemId = $("#modalChangePassword").attr("data-itemId");
-    console.log(itemId);
-    console.log("passwordEditNew:", passwordEditNew);
+    var editItemQuantity = $.trim($("#editItemQuantity").val());
+    var editPricePerUnit = $.trim($("#editPricePerUnit").val());
+    var editDescription = $.trim($("#editDescription").val());
+    var editQuantity = $.trim($("#editQuantity").val());
+    var EditTotalPrice = $.trim($("#EditTotalPrice").val());
+    var accountTypeButton = $.trim($("#accountTypeButtonEdit").text());
+    var id = $("#modalChangePassword").attr("data-itemId");
+    console.log(id);
+    console.log(accountTypeButton);
+    console.log("editItemQuantity:", editItemQuantity);
+    console.log("editPricePerUnit:", editPricePerUnit);
+    console.log("editDescription:", editDescription);
+    console.log("editQuantity:", editQuantity);
+    console.log("EditTotalPrice:", EditTotalPrice);
 
-    // var isOk = 0;
-    // if (passwordEditNew == "") {
-    //   isOk++;
-    //   console.log(isOk);
-    // }
+    var isOk = 0;
+    if (editDescription == "") {
+      isOk++;
+      console.log(isOk);
+    }
+    const regex = /^\d+$/; // Only allows numbers
+    if (!regex.test(editQuantity)) { 
+      console.log('regex')
+      isOk++; 
+      console.log(isOk); 
+    }
 
-    // if (isOk > 0) {
-    //   $("#error-message-password").css({
-    //     display: "block",
-    //     color: "red",
-    //   });
-    //   isOk = 0;
-    //   setTimeout(function () {
-    //     $("#error-message-password").css({
-    //       display: "none",
-    //       color: "red",
-    //     });
-    //   }, 4000);
-    // } else {
-    //   $.ajax({
-    //     url: "{{url_for('change_password')}}",
-    //     type: "POST",
-    //     contentType: "application/json",
-    //     data: JSON.stringify({
-    //       id: itemId,
-    //       newPassword: passwordEditNew,
-    //     }),
-    //     success: function (response) {
-    //       setTimeout(function () {
-    //         location.reload();
-    //       }, 500);
-    //       console.log(response);
-    //     },
-    //     error: function (error) {
-    //       console.log(error);
-    //     },
-    //   });
-    // }
+    if (isOk > 0) {
+      $("#error-message-password-edit").css({
+        display: "block",
+        color: "red",
+      });
+      isOk = 0;
+      setTimeout(function () {
+        $("#error-message-password-edit").css({
+          display: "none",
+          color: "red",
+        });
+      }, 4000);
+    } else {
+      $.ajax({
+        url: "{{url_for('purchaseOrderEdit')}}",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          id: id,
+          accountTypeButton: accountTypeButton,
+          editItemQuantity:editItemQuantity,
+          editPricePerUnit:editPricePerUnit,
+          editDescription:editDescription,
+          editQuantity:editQuantity,
+          EditTotalPrice:EditTotalPrice,
+
+        }),
+        success: function (response) {
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
   });
 
   $(document).on("click", ".edit-btn", function () {
