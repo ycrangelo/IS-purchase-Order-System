@@ -96,7 +96,7 @@
        
        <form action="/logout">
             <div class="d-flex justify-content-center w-100">
-                <button type="submit" class="btn btn-danger w-100">Log out</button>
+                <button type="submit" class="btn btn-danger w-100 logout">Log out</button>
             </div>
        </form>
     </div>
@@ -153,7 +153,17 @@
                 }
             });
         });
-    </script>    
+    </script>   
+    <script type="text/javascript">
+    $(document).on("click", ".logout", function () {
+        localStorage.setItem('usersLastSearch', "");
+        localStorage.setItem('accountTypeLastSearch', "");
+        localStorage.setItem('auditLogsLastSearch', "");
+        localStorage.setItem('companiesLastSearch', "");
+        localStorage.setItem('dashboardLastSearch', "");
+        localStorage.setItem('inventoryLastSearch', "");
+  });
+    </script> 
 
 </body>
 </html>
