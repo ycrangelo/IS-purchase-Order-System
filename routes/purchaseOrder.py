@@ -76,8 +76,8 @@ def register_purchase_order_routes(app):
 
             # Insert into purchase order
             my_cursor.execute(
-                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price,itemQuantity) VALUES (%s, %s, %s, %s, %s, %s)", 
-                (code_id, description, pricePerUnit, quantity, totalPrice,leftItemQuantity)
+                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price) VALUES ( %s, %s, %s, %s, %s)", 
+                (code_id, description, pricePerUnit, quantity, totalPrice)
             )
 
             # Insert audit log
@@ -89,6 +89,21 @@ def register_purchase_order_routes(app):
             # Update inventory quantity
             my_cursor.execute(
                 "UPDATE inventory SET quantity = %s WHERE code_id = %s",
+                (invQuantity, code_id)
+            )
+            my_cursor.execute(
+                "SELECT id FROM purchase_order WHERE item_code = %s AND Description = %s AND price_per_unit = %s AND quantity = %s AND total_price = %s",
+                (code_id, description, pricePerUnit, quantity, totalPrice)
+            )
+            logs = my_cursor.fetchone()
+            idni=logs[0]
+
+            my_cursor.execute(
+                "UPDATE purchase_order SET itemQuantity = %s WHERE id = %s",
+                (invQuantity, idni)
+            )
+            my_cursor.execute(
+                "UPDATE purchase_order SET itemQuantity = %s WHERE item_code = %s",
                 (invQuantity, code_id)
             )
 
