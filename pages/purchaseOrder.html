@@ -424,9 +424,9 @@
                 data-bs-target="#modalChangePassword"
               >
               <i class="bi bi-pencil-square"></i>
-              </button>
+            </button>
               <button type="button" class="btn btn-primary ViewPurchaseOrder"
-              onclick="window.location.href='{{ url_for('editPurchaseOrder') }}'">
+              onclick="window.location.href='{{ url_for('editPurchaseOrder', id=log[0], from_source='View') }}'">
         <i class="bi bi-eye-fill"></i>
       </button>
       
