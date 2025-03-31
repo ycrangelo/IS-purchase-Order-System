@@ -128,13 +128,12 @@ def register_accountType_routes(app):
         user_id = data.get('id')
 
         try:
-            # Update the user's password in the database
+
             my_cursor.execute(
                 "UPDATE account_type SET account_type = %s WHERE id = %s",
                 (account_type, user_id)
             )
 
-            # Log the password change (optional)
             my_cursor.execute(
                 "INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
                 (session['username'], f"Changed account_type for ID: {user_id}")
