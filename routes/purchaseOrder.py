@@ -1,5 +1,7 @@
 from flask import render_template, request, jsonify, session, redirect, url_for
 from routes.db import get_db_connection
+import random
+import string
 
 def register_purchase_order_routes(app):
     @app.route('/purchase_order')
@@ -13,17 +15,17 @@ def register_purchase_order_routes(app):
             # If not logged in, redirect to the login page
             return redirect(url_for('home'))
         # Query the database to get all audit logs
-        my_cursor.execute("SELECT * FROM purchase_order ORDER BY created_at DESC")
+        my_cursor.execute("SELECT * FROM purchase_number ORDER BY created_at DESC")
         logs = my_cursor.fetchall()  # Fetch all rows
 
         # Format the date and time for each log entry
         formatted_logs = []
         for log in logs:
             # Assuming log[3] is the datetime field (created_at)
-            # log_date = log[3].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
+            log_date = log[3].strftime('%Y-%m-%d')  # Date in format YYYY-MM-DD
             # log_time = log[3].strftime('%I:%M:%S %p')  # Time in 12-hour format with AM/PM
             
-            formatted_logs.append((log[0], log[1], log[2],log[3],log[4],log[5],log[6],log[7]))
+            formatted_logs.append((log[0], log[1], log[2],log_date))
 
         # Close cursor and database connection
         # Fetch code_id and price from inventory
@@ -74,11 +76,29 @@ def register_purchase_order_routes(app):
             invQuantity = int(quantinv) - quantity
             print("Updated Inventory Quantity:", invQuantity)
 
-            # Insert into purchase order
             my_cursor.execute(
-                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price) VALUES ( %s, %s, %s, %s, %s)", 
+                "INSERT INTO purchase_order (item_code, Description, price_per_unit, quantity, total_price) VALUES (%s, %s, %s, %s, %s)", 
                 (code_id, description, pricePerUnit, quantity, totalPrice)
             )
+            
+            # Fetch current inventory quantity
+            # Insert a new record
+            # Fetch the newly inserted ID
+            my_cursor.execute("SELECT LAST_INSERT_ID()")
+            new_id = my_cursor.fetchone()[0]
+
+            print("This is the ID of the newly created item:", new_id)
+            length = 15
+            random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+            print(random_string)
+            
+            my_cursor.execute(
+                "INSERT INTO purchase_number (purchase_order_number,purchase_order) VALUES (%s, %s)", 
+                (random_string,new_id)
+            )
+
+
+
 
             # Insert audit log
             my_cursor.execute(
@@ -141,7 +161,6 @@ def register_purchase_order_routes(app):
             editQuantity = int(float(data.get('editQuantity', 0)))
             EditTotalPrice = float(data.get('EditTotalPrice', 0))
 
-            # Fix 1: Add comma to make it a tuple
             my_cursor.execute("SELECT item_code FROM purchase_order WHERE id = %s", (id,))
             logs = my_cursor.fetchone()
 
