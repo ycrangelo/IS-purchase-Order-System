@@ -140,7 +140,7 @@ def register_companies_routes(app):
             # Log the password change (optional)
             my_cursor.execute(
                 "INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                (session['username'], f"Changed password for user ID: {user_id}")
+                (session['username'], f"Changed password for Company ID: {user_id}")
             )
 
             # Commit changes to the database
@@ -183,7 +183,7 @@ def register_companies_routes(app):
         """, (editCompanyName, editContactPerson, EditUsername, item_id))
             # Log the update to the audit log
             my_cursor.execute("INSERT INTO auditLogs (username, did) VALUES (%s, %s)", 
-                            (session['username'], f"Edited Company Details with code ID: {item_id}"))
+                            (session['username'], f"Edited Company Details with Company ID: {item_id}"))
 
             # Commit changes to the database
             mydb.commit()
