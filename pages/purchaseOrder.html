@@ -4,12 +4,12 @@
 
 {% block content %}
 
-<!-- Modal account type -->
+<!-- Modal View Purchase -->
 <div
   class="modal fade"
   data-bs-backdrop="static"
   data-bs-keyboard="false"
-  id="exampleModal"
+  id="viewPurchase"
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
@@ -17,7 +17,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create Account Type</h5>
+        <h5 class="modal-title" id="exampleModalLabel">View Purchase</h5>
         <button
           type="button"
           class="btn-close"
@@ -26,32 +26,83 @@
         ></button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
+        <div class="mb-3 gap-2">
+          <label class="fw-bold  mb-1" for="pricePerUnit">item Code</label>
           <input
             type="text"
-            id="accountType"
-            name="accountType"
+            id="viewItemCode"
+            name="viewItemCode"
             class="form-control"
-            placeholder="Account Type"
-            aria-label="Username"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
             aria-describedby="basic-addon1"
+            disabled
           />
         </div>
-        <div class="input-group mb-3">
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Description</label>
           <input
             type="text"
-            id="status"
-            name="status"
+            id="viewDescription"
+            name="viewDescription"
             class="form-control"
-            placeholder="Status"
-            aria-label="Username"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
             aria-describedby="basic-addon1"
+            disabled
           />
         </div>
-        <div class="d-flex justify-content-end w-100">
-          <button type="button" class="btn btn-success" id="saveAccountType">
-            Save
-          </button>
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Price Per Unit</label>
+          <input
+            type="text"
+            id="viewPricePerUnit"
+            name="viewPricePerUnit"
+            class="form-control"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Total Price</label>
+          <input
+            type="text"
+            id="viewTotalPrice"
+            name="viewTotalPrice"
+            class="form-control"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Quantity</label>
+          <input
+            type="text"
+            id="viewQuantity"
+            name="viewQuantity"
+            class="form-control"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
+        </div>
+        <div class="mb-3 gap-2 mt-4">
+          <label class="fw-bold  mb-1" for="pricePerUnit">Purchase Date</label>
+          <input
+            type="text"
+            id="viewPurchaseDate"
+            name="viewPurchaseDate"
+            class="form-control"
+            placeholder="Item Quantity"
+            aria-label="PricePerUnit"
+            aria-describedby="basic-addon1"
+            disabled
+          />
         </div>
       </div>
     </div>
@@ -355,7 +406,6 @@
           <th></th>
           <th>Item Code</th>
           <th>Description</th>
-          <th>Price Per Unit</th>
           <th>Quantity</th>
           <th>Total Price</th>
         </tr>
@@ -365,10 +415,11 @@
         <tr
           data-id="{{ log[0] }}"
           data-code-id="{{ log[1] }}"
-          data-Description="{{ log[2] }}"
+          data-description="{{ log[2] }}"
           data-price-per-unit="{{ log[6] }}"
           data-quantity="{{ log[4] }}"
           data-total-price="{{ log[3] }}"
+          data-purchase-date="{{ log[5] }}"
           data-left-item-quantity="{{ log[7] }}"
         >
           <td>
@@ -381,14 +432,14 @@
               >
               <i class="bi bi-pencil-square"></i>
               </button>
-              <!-- <button
+              <button
               type="button"
               class="btn btn-primary ViewPurchaseOrder"
               data-bs-toggle="modal"
-              data-bs-target="#modalChangePassword"
+              data-bs-target="#viewPurchase"
             >
             <i class="bi bi-eye-fill"></i>
-            </button> -->
+            </button>
               <!-- <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
               </button> -->
@@ -396,7 +447,6 @@
           </td>
           <td>{{ log[1] }}</td>
           <td>{{ log[2] }}</td>
-          <td>{{ log[6] }}</td>
           <td>{{ log[4] }}</td>
           <td>{{ log[3] }}</td>
         </tr>
@@ -769,6 +819,38 @@ $(document).ready(function() {
     document.getElementById("editPricePerUnit").value = pricePerUnit;
     document.getElementById("editItemQuantity").value = leftItemQuantity;
     $("#modalChangePassword").attr("data-itemId", id);
+  });
+
+  $(document).on("click", ".ViewPurchaseOrder", function () {
+    var row = $(this).closest("tr");
+    var viewPurchaseDate = row.data("purchase-date");
+    var viewQuantity = row.data("quantity");
+    var viewTotalPrice = row.data("total-price");
+    var viewPricePerUnit = row.data("price-per-unit");
+    var viewDescription = row.data("description");
+    var viewItemCode = row.data("code-id");
+    var id = row.data("id");
+    // Function to format the date as "Sept 13 2025"
+    function formatDate(dateStr) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+        
+        let dateObj = new Date(dateStr);
+        let month = months[dateObj.getMonth()];
+        let day = dateObj.getDate();
+        let year = dateObj.getFullYear();
+
+        return `${month} ${day} ${year}`;
+    }
+
+    var formattedDate = formatDate(viewPurchaseDate);
+
+    document.getElementById("viewPurchaseDate").value  =formattedDate;
+    document.getElementById("viewQuantity").value = viewQuantity;
+    document.getElementById("viewTotalPrice").value = viewTotalPrice;
+    document.getElementById("viewPricePerUnit").value = viewPricePerUnit;
+    document.getElementById("viewDescription").value = viewDescription;
+    document.getElementById("viewItemCode").value = viewItemCode;
+    $("#viewPurchase").attr("data-itemId", id);
   });
 
   // $(document).on("click", "#deactivation", function (event) {
