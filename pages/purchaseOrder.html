@@ -105,8 +105,8 @@
             </li>
             {% else %}
             <li>
-              <a class="dropdown-item" href="#" onclick="updateButtonTextEdit('No account types found', '')">
-                No account types found
+              <a class="dropdown-item" href="#" onclick="updateButtonTextEdit('No Item Found', '')">
+                No Item Found
               </a>
             </li>
             {% endfor %}
@@ -227,7 +227,7 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Code ID
+            Item
           </button>
           <ul class="dropdown-menu" aria-labelledby="accountTypeButton" style="max-height: 200px; overflow-y: auto;">
             {% for code, data in code_id.items() %}
@@ -238,8 +238,8 @@
             </li>
             {% else %}
             <li>
-              <a class="dropdown-item" href="#" onclick="updateButtonText('No account types found', '')">
-                No account types found
+              <a class="dropdown-item" href="#" onclick="updateButtonText('No Item Found', '')">
+                No Item Found
               </a>
             </li>
             {% endfor %}
@@ -344,7 +344,7 @@
         type="text" 
         class="form-control" 
         id="searchInput" 
-        placeholder="Search users..." 
+        placeholder="Search Purchase..." 
         style="max-width: 10rem;"
       >
     </div>
@@ -821,7 +821,7 @@ $(document).ready(function() {
   console.log(isOk);
 }
     // Regular expression to check if the value is not a number
-    if (accountTypeButton == "Code ID" || accountTypeButton == "No account types found" ) {
+    if (accountTypeButton == "Code ID" || accountTypeButton == "No Item Found" ) {
       console.log('INSIDEaccountTypeButton')
       isOk++;
       console.log(isOk);

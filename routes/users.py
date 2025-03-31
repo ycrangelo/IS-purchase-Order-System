@@ -72,7 +72,7 @@ def register_user_routes(app):
         my_cursor.execute("SELECT * FROM users ORDER BY created_at DESC")
         logs = my_cursor.fetchall()  # Fetch all rows
         
-        my_cursor.execute("SELECT * FROM account_type ORDER BY created_at DESC")
+        my_cursor.execute("SELECT * FROM account_type WHERE status != 0 ORDER BY created_at DESC")
         account_type = my_cursor.fetchall()  # Fetch all rows
 
         # Format the date and time for each log entry
