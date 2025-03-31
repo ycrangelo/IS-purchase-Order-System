@@ -7,6 +7,7 @@ from routes.auditlogs import register_auditLogs_routes  # Import the audit logs 
 from routes.accountType import register_accountType_routes 
 from routes.companies import register_companies_routes
 from routes.purchaseOrder import register_purchase_order_routes 
+from routes.editPurchaseOrder import register_editPurchaseOrder_routes 
 
 app = Flask(__name__, template_folder='pages')
 app.secret_key = 'your_strong_random_secret_key_here'
@@ -19,6 +20,7 @@ register_auditLogs_routes(app)  # Register audit logs routes
 register_accountType_routes(app)
 register_companies_routes(app)
 register_purchase_order_routes(app)
+register_editPurchaseOrder_routes(app)
 
 # Home route
 @app.route('/')

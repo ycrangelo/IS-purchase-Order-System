@@ -425,14 +425,11 @@
               >
               <i class="bi bi-pencil-square"></i>
               </button>
-              <button
-              type="button"
-              class="btn btn-primary ViewPurchaseOrder"
-              data-bs-toggle="modal"
-              data-bs-target="#viewPurchase"
-            >
-            <i class="bi bi-eye-fill"></i>
-            </button>
+              <button type="button" class="btn btn-primary ViewPurchaseOrder"
+              onclick="window.location.href='{{ url_for('editPurchaseOrder') }}'">
+        <i class="bi bi-eye-fill"></i>
+      </button>
+      
               <!-- <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
               </button> -->
