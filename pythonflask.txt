@@ -1,0 +1,96 @@
+SELECT * FROM pythonflask.inventory;
+
+create database pythonflask;
+
+use pythonflask;
+
+CREATE TABLE users (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    fullname VARCHAR(100),
+    status VARCHAR(100),
+    account_type VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO users (username, password, fullname, status, account_type)
+VALUES 
+('we', 'we', 'we B', "1", "tetet"),
+('qwe', 'qwe', 'qwe B', "1", "tetet");
+
+
+CREATE TABLE auditlogs (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100) NOT NULL,
+    did VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+
+-- ALTER TABLE inventory
+-- DROP COLUMN quantity;
+
+-- ALTER TABLE inventory
+-- CHANGE COLUMN disription desription VARCHAR(100);
+
+
+INSERT INTO inventory (code_id, desription, location, price, quantity)
+VALUES 
+('1', '2', '3 B', "4", "5"),
+('11', '22', '33 B', "44", "55");
+
+
+ALTER TABLE inventory
+MODIFY COLUMN status INT DEFAULT 1;
+
+ALTER TABLE auditlogs
+ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+
+CREATE TABLE account_type (
+    id INT NOT NULL AUTO_INCREMENT,
+    account_type VARCHAR(100) NOT NULL,
+    status VARCHAR(255) NOT NULL,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE purchase_number (
+    id INT NOT NULL AUTO_INCREMENT,
+    purchase_order_number VARCHAR(100) NOT NULL,
+    purchase_order VARCHAR(255) NOT NULL,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE purchase_order (
+    id INT NOT NULL AUTO_INCREMENT,
+    item_code VARCHAR(100) NOT NULL,
+    Description VARCHAR(255) NOT NULL,
+    price_per_unit int,
+    quantity int,
+    totalPrice int,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE purchase_order CHANGE totalPrice total_price int;
+
+ALTER TABLE purchase_order ADD COLUMN status INT;
+
+ALTER TABLE purchase_order
+MODIFY COLUMN status INT DEFAULT 1;
+
+CREATE TABLE companies (
+    id INT NOT NULL AUTO_INCREMENT,
+    company_name VARCHAR(100) NOT NULL,
+    contact_person VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
