@@ -16,8 +16,9 @@ def register_editPurchaseOrder_routes(app):
             SELECT * FROM purchase_order 
             WHERE id = %s
         """, (id,))
-        order = cursor.fetchone()
-        
+        order = cursor.fetchall()
+        print("ito oh")
+        print(order)
 
 
         # Pass the data to the template
@@ -27,5 +28,6 @@ def register_editPurchaseOrder_routes(app):
             id=id,
             po_number=pon,
             date=date,
-            show_sidebar=True
+            show_sidebar=True,
+            order=order
         )
