@@ -425,10 +425,10 @@
               >
               <i class="bi bi-pencil-square"></i>
             </button>
-              <button type="button" class="btn btn-primary ViewPurchaseOrder"
-              onclick="window.location.href='{{ url_for('editPurchaseOrder', id=log[0], from_source='View') }}'">
+            <button type="button" class="btn btn-primary ViewPurchaseOrder"
+            onclick="window.location.href='{{ url_for('editPurchaseOrder', source='View', id=log[0], pon=log[1], date=log[3]) }}'">
         <i class="bi bi-eye-fill"></i>
-      </button>
+    </button>
       
               <!-- <button type="button" class="btn btn-danger" id="deactivation">
                 <i class="bi bi-x-circle-fill"></i>
