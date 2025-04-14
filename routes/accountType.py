@@ -44,7 +44,7 @@ def register_accountType_routes(app):
             # Get the JSON data from the request body
             data = request.get_json()
             
-            status = data.get('status')
+            status = "1"
             accountType = data.get('accountType')
             
             print(f"Status: {status}, Account Type: {accountType}")
